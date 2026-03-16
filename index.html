@@ -819,6 +819,155 @@
             font-size: 0.8rem;
         }
 
+        /* ── Tech Stack Orbit ── */
+        .orbit-section {
+            padding: 8rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .orbit-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin: 4rem auto 0;
+        }
+
+        @media (max-width: 768px) {
+            .orbit-container { width: 320px; height: 320px; }
+        }
+
+        .orbit-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: white;
+            letter-spacing: 1px;
+            z-index: 10;
+            box-shadow: 0 0 60px rgba(99,102,241,0.3), 0 0 120px rgba(139,92,246,0.15);
+        }
+
+        .orbit-center::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(99,102,241,0.2);
+            animation: pulse-ring 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.15); opacity: 0; }
+        }
+
+        .orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            border: 1px dashed rgba(99,102,241,0.12);
+        }
+
+        .orbit-ring:nth-child(2) {
+            width: 260px;
+            height: 260px;
+            margin: -130px 0 0 -130px;
+            animation: orbit-rotate 40s linear infinite;
+        }
+
+        .orbit-ring:nth-child(3) {
+            width: 380px;
+            height: 380px;
+            margin: -190px 0 0 -190px;
+            animation: orbit-rotate 60s linear infinite reverse;
+        }
+
+        .orbit-ring:nth-child(4) {
+            width: 480px;
+            height: 480px;
+            margin: -240px 0 0 -240px;
+            animation: orbit-rotate 80s linear infinite;
+        }
+
+        @keyframes orbit-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .orbit-item {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: white;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .orbit-item:hover {
+            transform: scale(1.3) !important;
+            box-shadow: 0 10px 40px rgba(99,102,241,0.2);
+            border-color: var(--gradient-1);
+            z-index: 20;
+        }
+
+        /* Counter-rotate items so text stays upright */
+        .orbit-ring:nth-child(2) .orbit-item {
+            animation: counter-rotate 40s linear infinite;
+        }
+        .orbit-ring:nth-child(3) .orbit-item {
+            animation: counter-rotate 60s linear infinite reverse;
+        }
+        .orbit-ring:nth-child(4) .orbit-item {
+            animation: counter-rotate 80s linear infinite;
+        }
+
+        @keyframes counter-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+
+        .orbit-tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .orbit-item:hover .orbit-tooltip { opacity: 1; }
+
         /* ── Animations ── */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
@@ -1076,6 +1225,81 @@
             </div>
         </div>
     </div>
+
+    <!-- Tech Stack Orbit -->
+    <section class="orbit-section" id="stack">
+        <div class="reveal">
+            <div class="section-label">Stack Technique</div>
+            <h2 class="section-title" style="margin: 0 auto;">La puissance sous le capot.</h2>
+            <p class="section-desc" style="margin: 1rem auto 0;">Chaque écosystème s'appuie sur les technologies les plus avancées du marché, orchestrées en symbiose.</p>
+            <div class="animated-line" style="margin: 1.5rem auto 0;"></div>
+        </div>
+
+        <div class="orbit-container reveal">
+            <!-- Center -->
+            <div class="orbit-center">NEXUS<br>AI</div>
+
+            <!-- Ring 1 — inner (4 items) -->
+            <div class="orbit-ring">
+                <div class="orbit-item" style="top: -28px; left: 50%; margin-left: -28px;">
+                    LLM
+                    <span class="orbit-tooltip">Large Language Models — GPT, Claude, Mistral</span>
+                </div>
+                <div class="orbit-item" style="bottom: -28px; left: 50%; margin-left: -28px;">
+                    RAG
+                    <span class="orbit-tooltip">Retrieval Augmented Generation</span>
+                </div>
+                <div class="orbit-item" style="top: 50%; left: -28px; margin-top: -28px;">
+                    NLP
+                    <span class="orbit-tooltip">Natural Language Processing</span>
+                </div>
+                <div class="orbit-item" style="top: 50%; right: -28px; margin-top: -28px;">
+                    CV
+                    <span class="orbit-tooltip">Computer Vision — YOLO, SAM</span>
+                </div>
+            </div>
+
+            <!-- Ring 2 — middle (4 items) -->
+            <div class="orbit-ring">
+                <div class="orbit-item" style="top: -28px; left: 50%; margin-left: -28px;">
+                    Vec DB
+                    <span class="orbit-tooltip">Pinecone, Weaviate, Chroma</span>
+                </div>
+                <div class="orbit-item" style="bottom: -28px; left: 50%; margin-left: -28px;">
+                    API
+                    <span class="orbit-tooltip">REST & GraphQL Endpoints</span>
+                </div>
+                <div class="orbit-item" style="top: 50%; left: -28px; margin-top: -28px;">
+                    ETL
+                    <span class="orbit-tooltip">Extract, Transform, Load Pipelines</span>
+                </div>
+                <div class="orbit-item" style="top: 50%; right: -28px; margin-top: -28px;">
+                    ML
+                    <span class="orbit-tooltip">Machine Learning — PyTorch, TensorFlow</span>
+                </div>
+            </div>
+
+            <!-- Ring 3 — outer (4 items) -->
+            <div class="orbit-ring">
+                <div class="orbit-item" style="top: -28px; left: 50%; margin-left: -28px;">
+                    K8s
+                    <span class="orbit-tooltip">Kubernetes — Orchestration Cloud</span>
+                </div>
+                <div class="orbit-item" style="bottom: -28px; left: 50%; margin-left: -28px;">
+                    OCR
+                    <span class="orbit-tooltip">Reconnaissance Optique de Caractères</span>
+                </div>
+                <div class="orbit-item" style="top: 50%; left: -28px; margin-top: -28px;">
+                    TTS
+                    <span class="orbit-tooltip">Text-to-Speech & Speech-to-Text</span>
+                </div>
+                <div class="orbit-item" style="top: 50%; right: -28px; margin-top: -28px;">
+                    Auto
+                    <span class="orbit-tooltip">Agents Autonomes — AutoGPT, CrewAI</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Process Section -->
     <section id="processus">
