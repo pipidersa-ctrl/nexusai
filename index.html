@@ -738,35 +738,156 @@
             font-size: 0.9rem;
         }
 
-        /* ── Testimonials ── */
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 1.5rem;
+        /* ── Testimonials — Horizontal Scroll ── */
+        .testimonials-section {
+            padding: 8rem 0;
+            overflow: hidden;
+        }
+
+        .testimonials-section .section-header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .testimonials-track-wrapper {
+            position: relative;
             margin-top: 4rem;
+            cursor: grab;
+            overflow: hidden;
+            padding: 1rem 0 2rem;
+        }
+
+        .testimonials-track-wrapper:active { cursor: grabbing; }
+
+        .testimonials-track {
+            display: flex;
+            gap: 2rem;
+            padding: 0 calc((100vw - 1200px) / 2 + 2rem);
+            transition: transform 0.1s ease-out;
+            will-change: transform;
         }
 
         .testimonial-card {
-            padding: 2.5rem;
-            border-radius: 20px;
+            flex-shrink: 0;
+            width: 420px;
+            border-radius: 24px;
             border: 1px solid var(--border);
+            background: white;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             opacity: 0;
-            transform: translateY(40px);
+            transform: translateX(60px);
         }
 
         .testimonial-card.visible {
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(0);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+        }
+
+        .testimonial-video {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .testimonial-video::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(99,102,241,0.15), transparent 70%);
+        }
+
+        .video-waveform {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .video-waveform span {
+            width: 3px;
+            background: rgba(99,102,241,0.5);
+            border-radius: 100px;
+            animation: waveform 1.2s ease-in-out infinite;
+        }
+
+        .video-waveform span:nth-child(1) { height: 12px; animation-delay: 0s; }
+        .video-waveform span:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+        .video-waveform span:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+        .video-waveform span:nth-child(4) { height: 16px; animation-delay: 0.3s; }
+        .video-waveform span:nth-child(5) { height: 10px; animation-delay: 0.4s; }
+        .video-waveform span:nth-child(6) { height: 22px; animation-delay: 0.15s; }
+        .video-waveform span:nth-child(7) { height: 14px; animation-delay: 0.25s; }
+
+        @keyframes waveform {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.8); }
+        }
+
+        .video-play-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 1.5px solid rgba(255,255,255,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .video-play-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.1);
+        }
+
+        .video-play-btn::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 10px 0 10px 18px;
+            border-color: transparent transparent transparent white;
+            margin-left: 4px;
+        }
+
+        .video-duration {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255,255,255,0.6);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .testimonial-content {
+            padding: 2rem;
         }
 
         .testimonial-stars {
             color: #f59e0b;
-            font-size: 1rem;
-            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
         }
 
         .testimonial-card blockquote {
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             line-height: 1.7;
             color: var(--text);
             font-style: italic;
@@ -800,6 +921,22 @@
         .author-info span {
             font-size: 0.8rem;
             color: var(--text-secondary);
+        }
+
+        .scroll-hint {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .testimonial-card { width: 320px; }
+            .testimonials-track { padding: 0 1.5rem; }
         }
 
         /* ── Pricing ── */
@@ -1548,51 +1685,126 @@
         </div>
     </section>
 
-    <!-- Testimonials -->
-    <section id="temoignages">
-        <div class="reveal">
+    <!-- Testimonials — Horizontal Scroll -->
+    <div class="testimonials-section" id="temoignages">
+        <div class="section-header reveal">
             <div class="section-label">Témoignages</div>
             <h2 class="section-title">Ils ont transformé leur business.</h2>
             <p class="section-desc">Retours d'expérience de dirigeants ayant déployé nos écosystèmes IA.</p>
             <div class="animated-line"></div>
         </div>
 
-        <div class="testimonials-grid">
-            <div class="testimonial-card">
-                <div class="testimonial-stars">★★★★★</div>
-                <blockquote>« L'écosystème IA déployé a réduit nos délais de traitement de 72%. L'approche clé en main nous a permis de nous concentrer sur notre cœur de métier. »</blockquote>
-                <div class="testimonial-author">
-                    <div class="author-avatar">SL</div>
-                    <div class="author-info">
-                        <strong>Sophie Laurent</strong>
-                        <span>Directrice Innovation — FinCorp</span>
+        <div class="testimonials-track-wrapper" id="testimonialsWrapper">
+            <div class="testimonials-track" id="testimonialsTrack">
+                <!-- Card 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-video">
+                        <div class="video-play-btn"></div>
+                        <div class="video-waveform">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="video-duration">2:34</div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <blockquote>« L'écosystème IA déployé a réduit nos délais de traitement de 72%. L'approche clé en main nous a permis de nous concentrer sur notre cœur de métier. »</blockquote>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">SL</div>
+                            <div class="author-info">
+                                <strong>Sophie Laurent</strong>
+                                <span>Directrice Innovation — FinCorp</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="testimonial-card">
-                <div class="testimonial-stars">★★★★★</div>
-                <blockquote>« Le ROI a été visible dès le premier trimestre. Les agents IA fonctionnent en synergie et l'écosystème évolue avec nos besoins. »</blockquote>
-                <div class="testimonial-author">
-                    <div class="author-avatar">MR</div>
-                    <div class="author-info">
-                        <strong>Marc Renaud</strong>
-                        <span>CEO — MedTech Solutions</span>
+                <!-- Card 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-video">
+                        <div class="video-play-btn"></div>
+                        <div class="video-waveform">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="video-duration">3:12</div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <blockquote>« Le ROI a été visible dès le premier trimestre. Les agents IA fonctionnent en synergie et l'écosystème évolue avec nos besoins. »</blockquote>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">MR</div>
+                            <div class="author-info">
+                                <strong>Marc Renaud</strong>
+                                <span>CEO — MedTech Solutions</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="testimonial-card">
-                <div class="testimonial-stars">★★★★★</div>
-                <blockquote>« La qualité technique est exceptionnelle. Chaque composant de l'écosystème a été pensé pour s'intégrer parfaitement à notre stack existant. »</blockquote>
-                <div class="testimonial-author">
-                    <div class="author-avatar">AB</div>
-                    <div class="author-info">
-                        <strong>Amélie Beaumont</strong>
-                        <span>CTO — LogisPrime</span>
+                <!-- Card 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-video">
+                        <div class="video-play-btn"></div>
+                        <div class="video-waveform">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="video-duration">1:58</div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <blockquote>« La qualité technique est exceptionnelle. Chaque composant de l'écosystème a été pensé pour s'intégrer parfaitement à notre stack existant. »</blockquote>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">AB</div>
+                            <div class="author-info">
+                                <strong>Amélie Beaumont</strong>
+                                <span>CTO — LogisPrime</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-video">
+                        <div class="video-play-btn"></div>
+                        <div class="video-waveform">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="video-duration">4:05</div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <blockquote>« En 6 semaines, nous avions un écosystème complet qui traite automatiquement 80% de nos demandes clients. L'équipe technique est brillante. »</blockquote>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">TC</div>
+                            <div class="author-info">
+                                <strong>Thomas Carpentier</strong>
+                                <span>VP Engineering — RetailPlus</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 5 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-video">
+                        <div class="video-play-btn"></div>
+                        <div class="video-waveform">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="video-duration">2:47</div>
+                    </div>
+                    <div class="testimonial-content">
+                        <div class="testimonial-stars">★★★★★</div>
+                        <blockquote>« Notre productivité a bondi de 60% grâce aux agents IA de NexusAI. La capacité d'adaptation et l'évolutivité sont remarquables. »</blockquote>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">LD</div>
+                            <div class="author-info">
+                                <strong>Laura Dubois</strong>
+                                <span>COO — EduTech France</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+        <div class="scroll-hint">← glisser pour explorer →</div>
+    </div>
 
     <!-- Pricing -->
     <section id="tarifs">
@@ -1801,6 +2013,113 @@
                 }
             });
         });
+
+        // ════════════════════════════════════════════════
+        // ── TESTIMONIALS HORIZONTAL DRAG SCROLL ──
+        // ════════════════════════════════════════════════
+        (function() {
+            const wrapper = document.getElementById('testimonialsWrapper');
+            const track = document.getElementById('testimonialsTrack');
+            if (!wrapper || !track) return;
+
+            let isDragging = false;
+            let startX = 0;
+            let scrollLeft = 0;
+            let currentTranslate = 0;
+            let velocity = 0;
+            let lastX = 0;
+            let lastTime = 0;
+            let animFrame;
+
+            wrapper.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.pageX;
+                scrollLeft = currentTranslate;
+                lastX = e.pageX;
+                lastTime = Date.now();
+                velocity = 0;
+                cancelAnimationFrame(animFrame);
+                wrapper.style.cursor = 'grabbing';
+            });
+
+            wrapper.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.pageX;
+                const walk = x - startX;
+                const now = Date.now();
+                const dt = now - lastTime;
+                if (dt > 0) velocity = (x - lastX) / dt;
+                lastX = x;
+                lastTime = now;
+                currentTranslate = scrollLeft + walk;
+                clampAndApply();
+            });
+
+            function stopDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                wrapper.style.cursor = 'grab';
+                // Momentum
+                function momentum() {
+                    if (Math.abs(velocity) < 0.01) return;
+                    velocity *= 0.95;
+                    currentTranslate += velocity * 16;
+                    clampAndApply();
+                    animFrame = requestAnimationFrame(momentum);
+                }
+                momentum();
+            }
+
+            wrapper.addEventListener('mouseup', stopDrag);
+            wrapper.addEventListener('mouseleave', stopDrag);
+
+            // Touch support
+            wrapper.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                startX = e.touches[0].pageX;
+                scrollLeft = currentTranslate;
+                lastX = e.touches[0].pageX;
+                lastTime = Date.now();
+                velocity = 0;
+                cancelAnimationFrame(animFrame);
+            }, { passive: true });
+
+            wrapper.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const x = e.touches[0].pageX;
+                const walk = x - startX;
+                const now = Date.now();
+                const dt = now - lastTime;
+                if (dt > 0) velocity = (x - lastX) / dt;
+                lastX = x;
+                lastTime = now;
+                currentTranslate = scrollLeft + walk;
+                clampAndApply();
+            }, { passive: true });
+
+            wrapper.addEventListener('touchend', stopDrag);
+
+            function clampAndApply() {
+                const maxScroll = -(track.scrollWidth - wrapper.clientWidth);
+                currentTranslate = Math.max(maxScroll, Math.min(0, currentTranslate));
+                track.style.transform = `translateX(${currentTranslate}px)`;
+            }
+
+            // Reveal cards on scroll into view
+            const tObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const cards = track.querySelectorAll('.testimonial-card');
+                        cards.forEach((card, i) => {
+                            setTimeout(() => card.classList.add('visible'), i * 150);
+                        });
+                        tObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+            tObserver.observe(wrapper);
+        })();
 
         // ════════════════════════════════════════════════
         // ── ECOSYSTEM CONFIGURATOR ──
