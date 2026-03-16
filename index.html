@@ -480,6 +480,171 @@
             margin-top: 1.2rem;
         }
 
+        /* ── Ecosystem Configurator ── */
+        .configurator-section {
+            padding: 8rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .config-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 3rem;
+            margin-top: 4rem;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .config-layout { grid-template-columns: 1fr; }
+        }
+
+        .config-domains {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .config-domain-btn {
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            border: 1.5px solid var(--border);
+            background: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: left;
+        }
+
+        .config-domain-btn:hover {
+            border-color: var(--gradient-1);
+            transform: translateX(6px);
+        }
+
+        .config-domain-btn.active {
+            background: var(--text);
+            color: white;
+            border-color: var(--text);
+            transform: translateX(6px);
+        }
+
+        .config-domain-btn .btn-icon {
+            font-size: 1.3rem;
+        }
+
+        .config-preview {
+            background: #fafafa;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 3rem;
+            min-height: 450px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .config-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2.5rem;
+        }
+
+        .config-preview-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .config-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .config-stat {
+            text-align: center;
+        }
+
+        .config-stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--gradient-1);
+        }
+
+        .config-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .config-agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .config-agent {
+            background: white;
+            border-radius: 14px;
+            padding: 1.2rem;
+            border: 1px solid var(--border);
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.7) translateY(20px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .config-agent.shown {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .config-agent:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+
+        .config-agent-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            margin: 0 auto 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+
+        .config-agent-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .config-agent-type {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .config-connection-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(99,102,241,0.3), rgba(168,85,247,0.3));
+            transform-origin: left center;
+            opacity: 0;
+            transition: opacity 0.5s 0.8s;
+        }
+
+        .config-connection-line.shown { opacity: 1; }
+
         /* ── Stats Section ── */
         .stats-section {
             background: var(--text);
@@ -1199,6 +1364,60 @@
         </div>
     </section>
 
+    <!-- Ecosystem Configurator -->
+    <section class="configurator-section" id="configurateur">
+        <div class="reveal">
+            <div class="section-label">Configurateur</div>
+            <h2 class="section-title">Visualisez votre écosystème.</h2>
+            <p class="section-desc">Sélectionnez votre domaine et voyez les agents IA se déployer en temps réel.</p>
+            <div class="animated-line"></div>
+        </div>
+
+        <div class="config-layout reveal">
+            <div class="config-domains" id="configDomains">
+                <button class="config-domain-btn active" data-domain="sante">
+                    <span class="btn-icon">🏥</span> Santé & Médical
+                </button>
+                <button class="config-domain-btn" data-domain="finance">
+                    <span class="btn-icon">💰</span> Finance & Assurance
+                </button>
+                <button class="config-domain-btn" data-domain="ecommerce">
+                    <span class="btn-icon">🛒</span> E-Commerce & Retail
+                </button>
+                <button class="config-domain-btn" data-domain="education">
+                    <span class="btn-icon">🎓</span> Éducation & Formation
+                </button>
+                <button class="config-domain-btn" data-domain="immobilier">
+                    <span class="btn-icon">🏗️</span> Immobilier
+                </button>
+                <button class="config-domain-btn" data-domain="juridique">
+                    <span class="btn-icon">⚖️</span> Juridique
+                </button>
+            </div>
+
+            <div class="config-preview" id="configPreview">
+                <div class="config-preview-header">
+                    <div class="config-preview-title" id="configTitle">Santé & Médical</div>
+                    <div class="config-stats">
+                        <div class="config-stat">
+                            <div class="config-stat-value" id="configAgentCount">12</div>
+                            <div class="config-stat-label">Agents</div>
+                        </div>
+                        <div class="config-stat">
+                            <div class="config-stat-value" id="configROI">+67%</div>
+                            <div class="config-stat-label">ROI moyen</div>
+                        </div>
+                        <div class="config-stat">
+                            <div class="config-stat-value" id="configDeployTime">6 sem.</div>
+                            <div class="config-stat-label">Déploiement</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="config-agents-grid" id="configAgents"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- Stats Section -->
     <div class="stats-section reveal">
         <div>
@@ -1582,6 +1801,144 @@
                 }
             });
         });
+
+        // ════════════════════════════════════════════════
+        // ── ECOSYSTEM CONFIGURATOR ──
+        // ════════════════════════════════════════════════
+        (function() {
+            const ecosystems = {
+                sante: {
+                    title: 'Santé & Médical',
+                    agents: 12, roi: '+67%', deploy: '6 sem.',
+                    items: [
+                        { icon: '🔬', name: 'DiagAssist', type: 'Diagnostic IA' },
+                        { icon: '🧬', name: 'GenoScan', type: 'Analyse génomique' },
+                        { icon: '📋', name: 'TriageBot', type: 'Triage patients' },
+                        { icon: '💊', name: 'PharmaCheck', type: 'Interactions médicam.' },
+                        { icon: '🩻', name: 'RadiologyAI', type: 'Imagerie médicale' },
+                        { icon: '📊', name: 'EpiPredict', type: 'Prédiction épidémio.' },
+                        { icon: '🗣️', name: 'PatientVoice', type: 'NLP dossiers' },
+                        { icon: '📅', name: 'SmartPlan', type: 'Planning optimal' },
+                        { icon: '🔒', name: 'HIPAAGuard', type: 'Compliance HIPAA' },
+                        { icon: '📈', name: 'OutcomeTrack', type: 'Suivi résultats' },
+                        { icon: '🤖', name: 'NurseAssist', type: 'Aide soignant IA' },
+                        { icon: '🧪', name: 'LabAuto', type: 'Automatisation labo' }
+                    ]
+                },
+                finance: {
+                    title: 'Finance & Assurance',
+                    agents: 9, roi: '+82%', deploy: '5 sem.',
+                    items: [
+                        { icon: '🛡️', name: 'FraudShield', type: 'Détection fraude' },
+                        { icon: '📊', name: 'ScoreEngine', type: 'Scoring crédit' },
+                        { icon: '📈', name: 'AlgoTrade', type: 'Trading algorithmique' },
+                        { icon: '⚖️', name: 'RegComply', type: 'Compliance auto.' },
+                        { icon: '🔍', name: 'RiskAnalyzer', type: 'Analyse de risque' },
+                        { icon: '💬', name: 'WealthBot', type: 'Conseil patrimonial' },
+                        { icon: '📄', name: 'DocParser', type: 'Extraction documents' },
+                        { icon: '🔮', name: 'MarketPredict', type: 'Prédiction marché' },
+                        { icon: '🏦', name: 'KYCVerify', type: 'Vérification identité' }
+                    ]
+                },
+                ecommerce: {
+                    title: 'E-Commerce & Retail',
+                    agents: 15, roi: '+94%', deploy: '4 sem.',
+                    items: [
+                        { icon: '🎯', name: 'RecoEngine', type: 'Recommandations' },
+                        { icon: '💵', name: 'DynaPricing', type: 'Prix dynamique' },
+                        { icon: '📦', name: 'StockPredict', type: 'Stock prédictif' },
+                        { icon: '💬', name: 'ShopAssist', type: 'Chatbot vente' },
+                        { icon: '📸', name: 'VisualSearch', type: 'Recherche visuelle' },
+                        { icon: '⭐', name: 'ReviewSense', type: 'Analyse avis' },
+                        { icon: '📧', name: 'MailCraft', type: 'Emails personnalisés' },
+                        { icon: '🔄', name: 'ChurnGuard', type: 'Anti-churn' },
+                        { icon: '📊', name: 'ABTest', type: 'Tests A/B auto' },
+                        { icon: '🛒', name: 'CartOptim', type: 'Optimisation panier' },
+                        { icon: '🌐', name: 'SEOBot', type: 'SEO automatisé' },
+                        { icon: '📱', name: 'PushSmart', type: 'Notifications IA' },
+                        { icon: '🔍', name: 'TrendSpy', type: 'Détection tendances' },
+                        { icon: '🏷️', name: 'TagAuto', type: 'Tagging produits' },
+                        { icon: '🚚', name: 'DeliverAI', type: 'Optimisation livraison' }
+                    ]
+                },
+                education: {
+                    title: 'Éducation & Formation',
+                    agents: 8, roi: '+53%', deploy: '5 sem.',
+                    items: [
+                        { icon: '📚', name: 'TutorAI', type: 'Tutorat adaptatif' },
+                        { icon: '✍️', name: 'ContentGen', type: 'Création contenu' },
+                        { icon: '📝', name: 'AutoGrade', type: 'Évaluation auto.' },
+                        { icon: '🎯', name: 'PathFinder', type: 'Parcours adapté' },
+                        { icon: '📊', name: 'ProgressTrack', type: 'Suivi progression' },
+                        { icon: '🗣️', name: 'LangCoach', type: 'Coach linguistique' },
+                        { icon: '🧩', name: 'QuizMaker', type: 'Génération quiz' },
+                        { icon: '👥', name: 'GroupOptim', type: 'Groupes optimaux' }
+                    ]
+                },
+                immobilier: {
+                    title: 'Immobilier & Construction',
+                    agents: 7, roi: '+45%', deploy: '7 sem.',
+                    items: [
+                        { icon: '🏠', name: 'ValuEngine', type: 'Estimation auto.' },
+                        { icon: '📊', name: 'MarketPulse', type: 'Analyse marché' },
+                        { icon: '🔑', name: 'TenantMatch', type: 'Matching locataire' },
+                        { icon: '⚡', name: 'EnergyOpt', type: 'Optim. énergétique' },
+                        { icon: '📋', name: 'LeaseBot', type: 'Gestion baux IA' },
+                        { icon: '🏗️', name: 'BuildPredict', type: 'Prédiction chantier' },
+                        { icon: '📸', name: 'VisitVR', type: 'Visite virtuelle IA' }
+                    ]
+                },
+                juridique: {
+                    title: 'Juridique & Compliance',
+                    agents: 6, roi: '+58%', deploy: '6 sem.',
+                    items: [
+                        { icon: '📄', name: 'ContractAI', type: 'Analyse contrats' },
+                        { icon: '⚖️', name: 'JurisSearch', type: 'Recherche jurisp.' },
+                        { icon: '🔍', name: 'RegWatch', type: 'Veille réglementaire' },
+                        { icon: '✍️', name: 'DraftAssist', type: 'Rédaction assistée' },
+                        { icon: '🛡️', name: 'CompliBot', type: 'Vérification compliance' },
+                        { icon: '📊', name: 'CasePredict', type: 'Prédiction issues' }
+                    ]
+                }
+            };
+
+            const grid = document.getElementById('configAgents');
+            const btns = document.querySelectorAll('.config-domain-btn');
+
+            function renderEcosystem(key) {
+                const eco = ecosystems[key];
+                document.getElementById('configTitle').textContent = eco.title;
+                document.getElementById('configAgentCount').textContent = eco.agents;
+                document.getElementById('configROI').textContent = eco.roi;
+                document.getElementById('configDeployTime').textContent = eco.deploy;
+
+                // Clear and rebuild
+                grid.innerHTML = '';
+                eco.items.forEach((item, i) => {
+                    const el = document.createElement('div');
+                    el.className = 'config-agent';
+                    el.innerHTML = `
+                        <div class="config-agent-icon">${item.icon}</div>
+                        <div class="config-agent-name">${item.name}</div>
+                        <div class="config-agent-type">${item.type}</div>
+                    `;
+                    grid.appendChild(el);
+                    // Staggered reveal
+                    setTimeout(() => el.classList.add('shown'), 80 + i * 70);
+                });
+            }
+
+            btns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderEcosystem(btn.dataset.domain);
+                });
+            });
+
+            // Initial render
+            renderEcosystem('sante');
+        })();
 
         // ════════════════════════════════════════════════
         // ── CINEMATIC TEXT ANIMATIONS ──
