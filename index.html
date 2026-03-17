@@ -1025,6 +1025,370 @@
 
         .pricing-card.featured .pricing-guarantee { color: rgba(255,255,255,0.5); }
 
+        /* ── Cost Comparison Toggle ── */
+        .cost-toggle-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 2rem;
+            margin-bottom: -1rem;
+        }
+        .cost-toggle-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .cost-toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--border);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border: none;
+            outline: none;
+        }
+        .cost-toggle.active {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+        }
+        .cost-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: white;
+            transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .cost-toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        /* Cost comparison items inside pricing features */
+        .cost-alt {
+            display: none;
+            font-size: 0.7rem;
+            color: #dc2626;
+            text-decoration: line-through;
+            margin-left: auto;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .cost-compare-active .cost-alt {
+            display: inline;
+            opacity: 1;
+        }
+        .cost-total {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: linear-gradient(135deg, rgba(220,38,38,0.06), rgba(220,38,38,0.02));
+            border: 1px solid rgba(220,38,38,0.1);
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .cost-compare-active .cost-total {
+            display: block;
+        }
+        .cost-total strong {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            color: #dc2626;
+        }
+        .pricing-card.featured .cost-total {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+        }
+        .pricing-card.featured .cost-total strong {
+            color: #fca5a5;
+        }
+
+        /* ── Social Proof Counters ── */
+        .social-proof-strip {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            margin-top: 1rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+        .pricing-card.featured .social-proof-strip {
+            border-top-color: rgba(255,255,255,0.08);
+        }
+        .avatar-stack {
+            display: flex;
+        }
+        .avatar-stack span {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 2px solid white;
+            margin-left: -6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.55rem;
+            font-weight: 700;
+            color: white;
+        }
+        .avatar-stack span:first-child { margin-left: 0; }
+        .pricing-card.featured .avatar-stack span { border-color: var(--text); }
+        .proof-text {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .pricing-card.featured .proof-text { color: rgba(255,255,255,0.55); }
+        .spots-left {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: #dc2626;
+            background: rgba(220,38,38,0.08);
+            padding: 0.15rem 0.5rem;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+
+        /* ── Mini 3D Preview ── */
+        .mini-preview {
+            position: relative;
+            height: 100px;
+            margin: 1rem -2.5rem;
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: #08090e;
+        }
+        .pricing-card.featured .mini-preview {
+            border-color: rgba(255,255,255,0.06);
+        }
+        .mini-preview canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        .mini-preview-label {
+            position: absolute;
+            bottom: 0.4rem;
+            right: 0.6rem;
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(77,142,255,0.5);
+            pointer-events: none;
+        }
+
+        /* ── Build Your AI Crew (Configurator) ── */
+        .crew-builder {
+            margin-top: 3rem;
+            padding: 3rem 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            background: white;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.04);
+        }
+        .crew-builder-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .crew-builder-header h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.3rem;
+        }
+        .crew-builder-header p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .crew-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 0.6rem;
+            margin-bottom: 2rem;
+        }
+        .crew-agent {
+            padding: 0.65rem 0.5rem;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+            user-select: none;
+            position: relative;
+        }
+        .crew-agent:hover {
+            border-color: rgba(99,102,241,0.3);
+            background: rgba(99,102,241,0.03);
+            transform: translateY(-2px);
+        }
+        .crew-agent.selected {
+            border-color: var(--gradient-1);
+            background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.05));
+            box-shadow: 0 4px 15px rgba(99,102,241,0.15);
+        }
+        .crew-agent.selected::after {
+            content: '✓';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .crew-agent-name {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            margin-bottom: 0.15rem;
+        }
+        .crew-agent-role {
+            font-size: 0.55rem;
+            color: var(--text-secondary);
+        }
+        .crew-result {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.04));
+            border: 1px solid rgba(99,102,241,0.12);
+        }
+        .crew-result-plan {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color: var(--gradient-1);
+            margin-bottom: 0.3rem;
+        }
+        .crew-result-price {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 0.4rem;
+        }
+        .crew-result-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        .crew-count-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .crew-count-bar .count {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--gradient-1);
+        }
+        .crew-count-bar .label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* ── Risk Reversal Guarantee ── */
+        .risk-reversal {
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .risk-reversal-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-top: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.04);
+        }
+        .guarantee-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin: 2.5rem 0;
+        }
+        .guarantee-timeline::before {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gradient-1), var(--gradient-2), var(--gradient-3));
+            border-radius: 100px;
+        }
+        .guarantee-step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+        .guarantee-step-dot {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--gradient-1);
+            margin: 0 auto 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--gradient-1);
+            transition: all 0.5s;
+            box-shadow: 0 2px 10px rgba(99,102,241,0.15);
+        }
+        .guarantee-step.filled .guarantee-step-dot {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            color: white;
+            border-color: transparent;
+        }
+        .guarantee-step-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 0.2rem;
+        }
+        .guarantee-step-desc {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+        .guarantee-bottom {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+            line-height: 1.6;
+        }
+        .guarantee-bottom strong {
+            color: var(--text);
+        }
+
+        @media (max-width: 768px) {
+            .crew-grid { grid-template-columns: repeat(3, 1fr); }
+            .crew-builder { padding: 2rem 1.2rem; }
+            .mini-preview { margin: 1rem -1.2rem; }
+            .guarantee-timeline { flex-direction: column; gap: 1.5rem; }
+            .guarantee-timeline::before { display: none; }
+        }
+
         /* ── ROI Calculator (Game Changer Surprise) ── */
         .roi-section {
             padding: 6rem 2rem;
@@ -1624,6 +1988,7 @@
         <ul class="nav-links">
             <li><a href="#domaines">Domaines</a></li>
             <li><a href="#processus">Processus</a></li>
+            <li><a href="#crew-builder">Configurateur</a></li>
             <li><a href="#tarifs">Tarifs</a></li>
             <li><a href="#roi">ROI</a></li>
             <li><a href="god-view.html" style="color:#00f0ff;">God View</a></li>
@@ -2042,6 +2407,30 @@
         <div class="scroll-hint">← glisser pour explorer →</div>
     </div>
 
+    <!-- GAME CHANGER: Build Your AI Crew Configurator -->
+    <section id="crew-builder" style="padding: 6rem 2rem; max-width: 1100px; margin: 0 auto;">
+        <div class="reveal" style="text-align: center;">
+            <div class="section-label">Configurateur</div>
+            <h2 class="section-title" style="margin: 0 auto;">Construisez votre <span class="gradient-text">équipe IA</span></h2>
+            <p class="section-desc" style="margin: 1rem auto 0;">Sélectionnez les agents dont vous avez besoin. Le plan s'adapte automatiquement.</p>
+            <div class="animated-line" style="margin: 1.5rem auto 0;"></div>
+        </div>
+
+        <div class="crew-builder reveal">
+            <div class="crew-grid" id="crewGrid"></div>
+            <div class="crew-result" id="crewResult">
+                <div class="crew-count-bar">
+                    <span class="count" id="crewCount">0</span>
+                    <span class="label">agents sélectionnés</span>
+                </div>
+                <div class="crew-result-plan" id="crewPlan">Sélectionnez vos agents</div>
+                <div class="crew-result-price" id="crewPrice">—</div>
+                <div class="crew-result-desc" id="crewDesc">Cliquez sur les agents ci-dessus pour composer votre écosystème.</div>
+                <a href="#tarifs" class="btn-primary magnetic-btn" id="crewCta" style="display:none;">Voir le plan recommandé →</a>
+            </div>
+        </div>
+    </section>
+
     <!-- Pricing -->
     <section id="tarifs">
         <div class="reveal" style="text-align: center;">
@@ -2049,69 +2438,163 @@
             <h2 class="section-title" style="margin: 0 auto;">Votre écosystème IA clé en main.</h2>
             <p class="section-desc" style="margin: 1rem auto 0;">Déploiement one-shot + maintenance mensuelle optionnelle pour garder votre IA au sommet.</p>
             <div class="animated-line" style="margin: 1.5rem auto 0;"></div>
+
+            <!-- Amélioration 3: Cost Comparison Toggle -->
+            <div class="cost-toggle-wrap">
+                <span class="cost-toggle-label">Combien ça coûterait sans nous ?</span>
+                <button class="cost-toggle" id="costToggle" aria-label="Comparer les coûts"></button>
+            </div>
         </div>
 
-        <div class="pricing-grid">
-            <div class="pricing-card">
+        <div class="pricing-grid" id="pricingGrid">
+            <!-- CRÉATEUR -->
+            <div class="pricing-card" data-plan="createur">
                 <div class="pricing-badge unique">One-shot + maintenance</div>
                 <div class="pricing-label">Créateur</div>
-                <div class="pricing-price">990€ <span style="font-size:0.5em;font-weight:400;color:var(--text-light);">+ 199€/mois maintenance</span></div>
+                <div class="pricing-price">990€ <span style="font-size:0.5em;font-weight:400;color:var(--text-light);">+ 199€/mois</span></div>
+
+                <!-- Amélioration 4: Mini 3D Preview -->
+                <div class="mini-preview" id="miniPreview1">
+                    <span class="mini-preview-label">3 agents</span>
+                </div>
+
                 <ul class="pricing-features">
-                    <li>Jusqu'à 3 agents IA</li>
-                    <li>1 modèle IA inclus (GPT / Claude)</li>
+                    <li>Jusqu'à 3 agents IA <span class="cost-alt">~1 dev : 3 500€/mois</span></li>
+                    <li>1 modèle IA inclus (GPT / Claude) <span class="cost-alt">API : ~800€/mois</span></li>
                     <li>1 domaine métier</li>
-                    <li>Dashboard analytique</li>
+                    <li>Dashboard analytique <span class="cost-alt">SaaS : ~200€/mois</span></li>
                     <li>Support email 6 mois</li>
                     <li>Mises à jour continues</li>
-                    <li>Formation initiale (2h)</li>
+                    <li>Formation initiale (2h) <span class="cost-alt">Consultant : 400€</span></li>
                     <li>Documentation technique</li>
                     <li>Code source livré</li>
                 </ul>
+                <div class="cost-total">Équivalent interne : <strong>~54 000€/an</strong></div>
+
                 <a href="#contact" class="btn-secondary magnetic-btn" style="width: 100%; justify-content: center;">Choisir Créateur</a>
                 <div class="pricing-guarantee">🔒 Satisfait ou remboursé 30 jours</div>
+
+                <!-- Amélioration 2: Social Proof -->
+                <div class="social-proof-strip">
+                    <div class="avatar-stack">
+                        <span style="background:#6366f1;">T</span>
+                        <span style="background:#8b5cf6;">M</span>
+                        <span style="background:#a78bfa;">S</span>
+                    </div>
+                    <span class="proof-text">12 déployés ce mois</span>
+                    <span class="spots-left">4 places restantes</span>
+                </div>
             </div>
-            <div class="pricing-card featured">
+
+            <!-- BUSINESS -->
+            <div class="pricing-card featured" data-plan="business">
                 <div class="pricing-badge popular">Le plus choisi</div>
                 <div class="pricing-label">Business</div>
-                <div class="pricing-price">1 990€ <span style="font-size:0.5em;font-weight:400;color:rgba(255,255,255,0.6);">+ 349€/mois maintenance</span></div>
+                <div class="pricing-price">1 990€ <span style="font-size:0.5em;font-weight:400;color:rgba(255,255,255,0.6);">+ 349€/mois</span></div>
+
+                <div class="mini-preview" id="miniPreview2">
+                    <span class="mini-preview-label">12 agents</span>
+                </div>
+
                 <ul class="pricing-features">
-                    <li>Jusqu'à 12 agents IA</li>
-                    <li>3 modèles IA inclus (GPT, Claude, Mistral)</li>
-                    <li>Assets spécialisés par domaine</li>
+                    <li>Jusqu'à 12 agents IA <span class="cost-alt">~3 devs : 10 500€/mois</span></li>
+                    <li>3 modèles IA (GPT, Claude, Mistral) <span class="cost-alt">APIs : ~2 400€/mois</span></li>
+                    <li>Assets spécialisés par domaine <span class="cost-alt">Designer : 4 000€/mois</span></li>
                     <li>3 domaines métier</li>
-                    <li>API & intégrations custom</li>
+                    <li>API & intégrations custom <span class="cost-alt">Dev intégration : 5 000€</span></li>
                     <li>Support prioritaire 12 mois</li>
                     <li>Mises à jour continues + évolutives</li>
-                    <li>Formation équipes (8h)</li>
-                    <li>Architecture sur-mesure</li>
+                    <li>Formation équipes (8h) <span class="cost-alt">Formation : 1 600€</span></li>
+                    <li>Architecture sur-mesure <span class="cost-alt">Architecte : 800€/jour</span></li>
                     <li>Code source + documentation</li>
                     <li>Appel stratégique mensuel</li>
                     <li>Optimisation trimestrielle</li>
                 </ul>
+                <div class="cost-total">Équivalent interne : <strong>~210 000€/an</strong></div>
+
                 <a href="#contact" class="btn-primary magnetic-btn">Choisir Business →</a>
                 <div class="pricing-guarantee">🔒 Satisfait ou remboursé 30 jours</div>
+
+                <div class="social-proof-strip">
+                    <div class="avatar-stack">
+                        <span style="background:#6366f1;">A</span>
+                        <span style="background:#818cf8;">L</span>
+                        <span style="background:#a78bfa;">D</span>
+                        <span style="background:#c4b5fd;">R</span>
+                    </div>
+                    <span class="proof-text">7 en cours</span>
+                    <span class="spots-left">2 places ce trimestre</span>
+                </div>
             </div>
-            <div class="pricing-card">
+
+            <!-- SUR MESURE -->
+            <div class="pricing-card" data-plan="surmesure">
                 <div class="pricing-badge unique">Sur devis</div>
                 <div class="pricing-label">Sur Mesure</div>
                 <div class="pricing-price">À partir de 3 500€</div>
+
+                <div class="mini-preview" id="miniPreview3">
+                    <span class="mini-preview-label">Réseau complet</span>
+                </div>
+
                 <ul class="pricing-features">
-                    <li>Agents IA illimités</li>
-                    <li>Tous modèles IA du marché</li>
+                    <li>Agents IA illimités <span class="cost-alt">Équipe IA : 25 000€/mois</span></li>
+                    <li>Tous modèles IA du marché <span class="cost-alt">Licences : ~5 000€/mois</span></li>
                     <li>Assets spécialisés illimités</li>
                     <li>Tous domaines métier</li>
-                    <li>Infrastructure dédiée</li>
-                    <li>Architecte IA dédié</li>
+                    <li>Infrastructure dédiée <span class="cost-alt">Infra cloud : 3 000€/mois</span></li>
+                    <li>Architecte IA dédié <span class="cost-alt">Senior : 800€/jour</span></li>
                     <li>SLA garanti 99.9%</li>
-                    <li>Audit de sécurité complet</li>
+                    <li>Audit de sécurité complet <span class="cost-alt">Audit : 15 000€</span></li>
                     <li>Support dédié 24 mois</li>
-                    <li>Formation sur-site</li>
+                    <li>Formation sur-site <span class="cost-alt">Formation : 5 000€</span></li>
                     <li>Maintenance évolutive incluse</li>
                     <li>Propriété totale du code</li>
                 </ul>
+                <div class="cost-total">Équivalent interne : <strong>~420 000€/an</strong></div>
+
                 <a href="#contact" class="btn-secondary magnetic-btn" style="width: 100%; justify-content: center;">Demander un devis</a>
                 <div class="pricing-guarantee">🔒 NDA + Contrat personnalisé</div>
+
+                <div class="social-proof-strip">
+                    <div class="avatar-stack">
+                        <span style="background:#6366f1;">F</span>
+                        <span style="background:#8b5cf6;">C</span>
+                    </div>
+                    <span class="proof-text">2 en production</span>
+                </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Amélioration 5: Risk Reversal Guarantee -->
+    <section class="risk-reversal">
+        <div class="reveal" style="text-align: center;">
+            <div class="section-label">Garantie zéro risque</div>
+            <h2 class="section-title" style="margin: 0 auto;">Vous ne risquez <span class="gradient-text">rien</span>.</h2>
+        </div>
+        <div class="risk-reversal-card reveal">
+            <div class="guarantee-timeline" id="guaranteeTimeline">
+                <div class="guarantee-step filled">
+                    <div class="guarantee-step-dot">1</div>
+                    <div class="guarantee-step-label">Jour 1</div>
+                    <div class="guarantee-step-desc">Déploiement de votre écosystème</div>
+                </div>
+                <div class="guarantee-step">
+                    <div class="guarantee-step-dot">14</div>
+                    <div class="guarantee-step-label">Jour 14</div>
+                    <div class="guarantee-step-desc">Check-in performance avec votre architecte</div>
+                </div>
+                <div class="guarantee-step">
+                    <div class="guarantee-step-dot">30</div>
+                    <div class="guarantee-step-label">Jour 30</div>
+                    <div class="guarantee-step-desc">Pas convaincu ? Remboursement intégral</div>
+                </div>
+            </div>
+            <p class="guarantee-bottom">
+                Si après 30 jours votre écosystème IA ne vous convient pas, nous vous remboursons <strong>100% du montant</strong>.<br>
+                Et vous gardez la documentation technique et le code produit. <strong>Aucun engagement, aucun risque.</strong>
+            </p>
         </div>
     </section>
 
@@ -2581,6 +3064,235 @@
                     }, 3000);
                 }, 1200);
             });
+        })();
+
+        // ════════════════════════════════════════════════
+        // ── CREW BUILDER (Game Changer Configurator) ──
+        // ════════════════════════════════════════════════
+        (function() {
+            const crewAgents = [
+                { id:'NATHAN', role:'Orchestrateur', group:'core', required:true },
+                { id:'VIZION', role:'Analyse visuelle', group:'perception' },
+                { id:'SCOUT', role:'Veille web', group:'perception' },
+                { id:'LENS', role:'Analyse profonde', group:'perception' },
+                { id:'SPARK', role:'Idéation', group:'creation' },
+                { id:'CREA', role:'Design créatif', group:'creation' },
+                { id:'SCRIPT', role:'Génération code', group:'creation' },
+                { id:'VISUAL', role:'Génération images', group:'creation' },
+                { id:'EDITOR', role:'Édition contenu', group:'creation' },
+                { id:'FORGE', role:'Build & Deploy', group:'execution' },
+                { id:'RUNNER', role:'Exécution tâches', group:'execution' },
+                { id:'PIPELINE', role:'Workflow', group:'execution' },
+                { id:'SENTINEL', role:'Sécurité', group:'security' },
+                { id:'CORTEX', role:'Base connaissances', group:'data' },
+                { id:'MEMORY', role:'Mémoire contexte', group:'data' },
+                { id:'VECTOR', role:'Embeddings', group:'data' },
+                { id:'BRIDGE', role:'API Gateway', group:'comm' },
+                { id:'RELAY', role:'Messagerie', group:'comm' },
+                { id:'TUNER', role:'Fine-tuning', group:'optim' },
+                { id:'PROFILER', role:'Performance', group:'optim' },
+                { id:'LINGUIST', role:'Traduction', group:'specialist' },
+                { id:'ANALYST', role:'Analytics', group:'specialist' },
+                { id:'ORACLE', role:'Prédictions', group:'specialist' }
+            ];
+
+            const grid = document.getElementById('crewGrid');
+            const countEl = document.getElementById('crewCount');
+            const planEl = document.getElementById('crewPlan');
+            const priceEl = document.getElementById('crewPrice');
+            const descEl = document.getElementById('crewDesc');
+            const ctaEl = document.getElementById('crewCta');
+            if (!grid) return;
+
+            const selected = new Set(['NATHAN']); // NATHAN always selected
+
+            crewAgents.forEach(agent => {
+                const el = document.createElement('div');
+                el.className = 'crew-agent' + (agent.required ? ' selected' : '');
+                el.dataset.id = agent.id;
+                el.innerHTML = `
+                    <div class="crew-agent-name">${agent.id}</div>
+                    <div class="crew-agent-role">${agent.role}</div>
+                `;
+                if (!agent.required) {
+                    el.addEventListener('click', () => {
+                        if (selected.has(agent.id)) {
+                            selected.delete(agent.id);
+                            el.classList.remove('selected');
+                        } else {
+                            selected.add(agent.id);
+                            el.classList.add('selected');
+                        }
+                        updateCrewResult();
+                    });
+                }
+                grid.appendChild(el);
+            });
+
+            function updateCrewResult() {
+                const count = selected.size;
+                countEl.textContent = count;
+
+                if (count <= 3) {
+                    planEl.textContent = 'Plan Créateur';
+                    priceEl.textContent = '990€ + 199€/mois';
+                    descEl.textContent = `${count} agent${count > 1 ? 's' : ''} sélectionné${count > 1 ? 's' : ''} — Parfait pour démarrer.`;
+                } else if (count <= 12) {
+                    planEl.textContent = 'Plan Business';
+                    priceEl.textContent = '1 990€ + 349€/mois';
+                    descEl.textContent = `${count} agents sélectionnés — L'écosystème complet pour scaler.`;
+                } else {
+                    planEl.textContent = 'Plan Sur Mesure';
+                    priceEl.textContent = 'À partir de 3 500€';
+                    descEl.textContent = `${count} agents sélectionnés — Architecture enterprise dédiée.`;
+                }
+                ctaEl.style.display = count > 0 ? 'inline-flex' : 'none';
+
+                // Highlight matching pricing card
+                document.querySelectorAll('.pricing-card').forEach(c => c.style.outline = '');
+                const planMap = { 'Plan Créateur': 'createur', 'Plan Business': 'business', 'Plan Sur Mesure': 'surmesure' };
+                const target = document.querySelector(`.pricing-card[data-plan="${planMap[planEl.textContent]}"]`);
+                if (target) target.style.outline = '2px solid var(--gradient-1)';
+            }
+
+            updateCrewResult();
+        })();
+
+        // ════════════════════════════════════════════════
+        // ── COST COMPARISON TOGGLE ──
+        // ════════════════════════════════════════════════
+        (function() {
+            const toggle = document.getElementById('costToggle');
+            const pricingGrid = document.getElementById('pricingGrid');
+            if (!toggle || !pricingGrid) return;
+
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+                pricingGrid.classList.toggle('cost-compare-active');
+            });
+        })();
+
+        // ════════════════════════════════════════════════
+        // ── MINI 3D PREVIEWS ──
+        // ════════════════════════════════════════════════
+        (function() {
+            if (typeof THREE === 'undefined') return;
+
+            function createMiniPreview(containerId, nodeCount) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const scene = new THREE.Scene();
+                const w = container.clientWidth || 300;
+                const h = container.clientHeight || 100;
+                const cam = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
+                cam.position.set(0, 0, 12);
+
+                const r = new THREE.WebGLRenderer({ antialias:true, alpha:false });
+                r.setSize(w, h);
+                r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                r.setClearColor(0x08090e, 1);
+                container.insertBefore(r.domElement, container.firstChild);
+
+                // Create glow texture
+                const cv = document.createElement('canvas');
+                cv.width = cv.height = 64;
+                const ctx = cv.getContext('2d');
+                const g = ctx.createRadialGradient(32,32,0,32,32,32);
+                g.addColorStop(0, 'rgba(99,102,241,0.8)');
+                g.addColorStop(0.4, 'rgba(99,102,241,0.2)');
+                g.addColorStop(1, 'rgba(99,102,241,0)');
+                ctx.fillStyle = g;
+                ctx.fillRect(0,0,64,64);
+                const glowTex = new THREE.CanvasTexture(cv);
+
+                const nodes = [];
+                const actual = Math.min(nodeCount, 33);
+
+                for (let i = 0; i < actual; i++) {
+                    const phi = Math.acos(-1 + (2 * i + 1) / actual);
+                    const theta = Math.sqrt(actual * Math.PI) * phi;
+                    const rad = 4;
+                    const x = rad * Math.cos(theta) * Math.sin(phi);
+                    const y = rad * Math.sin(theta) * Math.sin(phi) * 0.5;
+                    const z = rad * Math.cos(phi) * 0.3;
+
+                    const geo = new THREE.SphereGeometry(0.12, 8, 8);
+                    const mat = new THREE.MeshBasicMaterial({ color: i === 0 ? 0x818cf8 : 0x4d5bff });
+                    const mesh = new THREE.Mesh(geo, mat);
+                    mesh.position.set(x, y, z);
+                    scene.add(mesh);
+
+                    const smat = new THREE.SpriteMaterial({ map:glowTex, transparent:true, opacity:0.4, blending:THREE.AdditiveBlending });
+                    const sprite = new THREE.Sprite(smat);
+                    sprite.position.copy(mesh.position);
+                    sprite.scale.set(0.8, 0.8, 1);
+                    scene.add(sprite);
+
+                    nodes.push({ mesh, x, y, z, phase: Math.random() * Math.PI * 2 });
+                }
+
+                // Connections from first node to others
+                for (let i = 1; i < nodes.length; i++) {
+                    const geo = new THREE.BufferGeometry();
+                    const pos = new Float32Array([nodes[0].x,nodes[0].y,nodes[0].z, nodes[i].x,nodes[i].y,nodes[i].z]);
+                    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+                    const line = new THREE.Line(geo, new THREE.LineBasicMaterial({
+                        color:0x6366f1, transparent:true, opacity:0.08, blending:THREE.AdditiveBlending
+                    }));
+                    scene.add(line);
+                }
+
+                const clock = new THREE.Clock();
+                function animate() {
+                    requestAnimationFrame(animate);
+                    const t = clock.getElapsedTime();
+                    nodes.forEach(n => {
+                        n.mesh.position.y = n.y + Math.sin(t * 0.5 + n.phase) * 0.15;
+                    });
+                    scene.rotation.y = t * 0.15;
+                    r.render(scene, cam);
+                }
+                animate();
+            }
+
+            // Init previews with IntersectionObserver for perf
+            const previewInited = {};
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !previewInited[entry.target.id]) {
+                        previewInited[entry.target.id] = true;
+                        const counts = { miniPreview1: 3, miniPreview2: 12, miniPreview3: 33 };
+                        createMiniPreview(entry.target.id, counts[entry.target.id]);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            ['miniPreview1','miniPreview2','miniPreview3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) observer.observe(el);
+            });
+        })();
+
+        // ════════════════════════════════════════════════
+        // ── GUARANTEE TIMELINE ANIMATION ──
+        // ════════════════════════════════════════════════
+        (function() {
+            const timeline = document.getElementById('guaranteeTimeline');
+            if (!timeline) return;
+
+            const steps = timeline.querySelectorAll('.guarantee-step');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        steps.forEach((step, i) => {
+                            setTimeout(() => step.classList.add('filled'), 400 + i * 500);
+                        });
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            observer.observe(timeline);
         })();
 
         // ════════════════════════════════════════════════
