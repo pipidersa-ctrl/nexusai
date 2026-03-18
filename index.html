@@ -413,11 +413,7 @@
             transform: translateY(0);
         }
 
-        .config-neural-wrap {
-            width: 100%;
-            max-width: 1000px;
-            margin: 3rem auto 0;
-        }
+        /* (config-neural-wrap removed — neural canvas now in stack section) */
 
         /* ── 3D Neural Network Canvas ── */
         #neural-canvas {
@@ -830,18 +826,6 @@
             gap: 4rem;
             align-items: center;
             position: relative;
-            overflow: hidden;
-        }
-
-        .stats-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(99,102,241,0.3), transparent 70%);
-            pointer-events: none;
         }
 
         .stats-grid {
@@ -3332,6 +3316,194 @@
             .nxa-greeting { right: 1rem; bottom: 5rem; max-width: 260px; }
         }
 
+        /* ── Stack Dual Layout (orbit + neural canvas) ── */
+        .stack-dual-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+        @media (max-width: 900px) {
+            .stack-dual-layout { grid-template-columns: 1fr; }
+        }
+        .stack-neural-preview {
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .stack-neural-preview #neural-canvas {
+            height: 400px;
+        }
+        .stack-neural-label {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 2;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* ── MODE GALAXIE TOGGLE ── */
+        .mode-toggle {
+            position: fixed;
+            bottom: 1.5rem;
+            left: 1.5rem;
+            z-index: 9995;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.12);
+            cursor: pointer;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+        }
+        .mode-toggle:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(99,102,241,0.3);
+        }
+        .mode-toggle-dot {
+            width: 28px;
+            height: 16px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.15);
+            position: relative;
+            transition: background 0.3s;
+        }
+        .mode-toggle-dot::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .mode-toggle.active .mode-toggle-dot {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+        }
+        .mode-toggle.active .mode-toggle-dot::after {
+            transform: translateX(12px);
+        }
+
+        /* ── Pro Mode (white/light) ── */
+        body.mode-pro {
+            --bg: #ffffff;
+            --text: #0a0a0a;
+            --text-secondary: #6b7280;
+            --accent: #0a0a0a;
+            --accent-light: #f3f4f6;
+            --border: #e5e7eb;
+            background: #ffffff;
+        }
+        body.mode-pro .aurora-bg,
+        body.mode-pro #agentStarfield {
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+        body.mode-pro .grain-overlay {
+            opacity: 0 !important;
+        }
+        body.mode-pro .navbar {
+            background: rgba(255,255,255,0.85);
+            border-bottom-color: rgba(0,0,0,0.06);
+        }
+        body.mode-pro .navbar.scrolled {
+            background: rgba(255,255,255,0.95);
+        }
+        body.mode-pro .nav-dropdown-menu {
+            background: rgba(255,255,255,0.98);
+            box-shadow: 0 25px 80px rgba(0,0,0,0.1);
+        }
+        body.mode-pro .nav-dropdown-menu::before {
+            background: rgba(255,255,255,0.98);
+            border-color: rgba(0,0,0,0.06);
+        }
+        body.mode-pro .domain-card,
+        body.mode-pro .process-card,
+        body.mode-pro .config-agent,
+        body.mode-pro .testimonial-card,
+        body.mode-pro .config-preview,
+        body.mode-pro .roi-calculator,
+        body.mode-pro .risk-reversal-card,
+        body.mode-pro .form-container,
+        body.mode-pro .promo-popup {
+            background: rgba(255,255,255,0.9);
+            border-color: #e5e7eb;
+        }
+        body.mode-pro .pricing-card {
+            background: rgba(255,255,255,0.9);
+            border-color: #e5e7eb;
+        }
+        body.mode-pro .pricing-card.featured {
+            background: linear-gradient(145deg, #0c0c12, #1a1a2e);
+            color: white;
+            border-color: rgba(139,92,246,0.3);
+        }
+        body.mode-pro .orbit-item {
+            background: white;
+            border-color: #e5e7eb;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        body.mode-pro .config-domain-btn {
+            background: white;
+            color: var(--text);
+        }
+        body.mode-pro .config-domain-btn.active {
+            color: white;
+        }
+        body.mode-pro .form-group input,
+        body.mode-pro .form-group select,
+        body.mode-pro .form-group textarea {
+            background: rgba(248,249,255,0.9);
+            color: #0a0a0a;
+            border-color: #e5e7eb;
+        }
+        body.mode-pro .form-group input::placeholder,
+        body.mode-pro .form-group textarea::placeholder {
+            color: #9ca3af;
+        }
+        body.mode-pro .section-title .reveal-word {
+            color: rgba(0,0,0,0.12);
+        }
+        body.mode-pro .section-title .reveal-word.lit {
+            color: #0a0a0a;
+        }
+        body.mode-pro .process-number {
+            color: rgba(0,0,0,0.06);
+        }
+        body.mode-pro .domain-card:hover {
+            box-shadow: 0 25px 80px rgba(0,0,0,0.08);
+        }
+        body.mode-pro .mode-toggle {
+            background: rgba(0,0,0,0.05);
+            border-color: rgba(0,0,0,0.1);
+            color: rgba(0,0,0,0.5);
+        }
+        body.mode-pro .urgency-banner {
+            background: linear-gradient(90deg, var(--gradient-1), var(--gradient-3));
+        }
+        body.mode-pro .loader {
+            background: #ffffff;
+        }
+        body.mode-pro .stats-section {
+            background: var(--text);
+            color: white;
+        }
+
         /* ── GAME CHANGER: Aurora Borealis Background ── */
         .aurora-bg {
             position: fixed;
@@ -3764,9 +3936,6 @@
             </div>
         </div>
 
-        <div class="config-neural-wrap reveal" style="margin-top:3rem;">
-            <div id="neural-canvas"></div>
-        </div>
     </section>
 
     <!-- Stats Section -->
@@ -3805,7 +3974,8 @@
             <div class="animated-line" style="margin: 1.5rem auto 0;"></div>
         </div>
 
-        <div class="orbit-container reveal">
+        <div class="stack-dual-layout reveal">
+        <div class="orbit-container">
             <!-- Center -->
             <div class="orbit-center">NEXUS<br>AI</div>
 
@@ -3868,6 +4038,11 @@
                     <span class="orbit-tooltip">Agents Autonomes — AutoGPT, CrewAI</span>
                 </div>
             </div>
+        </div>
+        <div class="stack-neural-preview">
+            <div class="stack-neural-label">Réseau d'agents en action</div>
+            <div id="neural-canvas"></div>
+        </div>
         </div>
     </section>
 
@@ -6510,6 +6685,12 @@
     })();
     </script>
 
+    <!-- Mode Galaxie Toggle -->
+    <div class="mode-toggle active" id="modeToggle" title="Basculer entre Mode Galaxie et Mode Pro">
+        <span class="mode-toggle-dot"></span>
+        <span class="mode-toggle-text">Mode Galaxie</span>
+    </div>
+
     <!-- Domain 3D Modal -->
     <div class="domain-3d-modal" id="domain3dModal">
         <div class="domain-3d-backdrop" id="domain3dBackdrop"></div>
@@ -7035,6 +7216,30 @@
             }
             drawParticles();
         }
+    })();
+
+    // ════════════════════════════════════════════════
+    // ── MODE GALAXIE TOGGLE ──
+    // ════════════════════════════════════════════════
+    (function() {
+        var toggle = document.getElementById('modeToggle');
+        var text = toggle.querySelector('.mode-toggle-text');
+        if (!toggle) return;
+
+        // Check localStorage for saved preference
+        var saved = localStorage.getItem('nexusai-mode');
+        if (saved === 'pro') {
+            document.body.classList.add('mode-pro');
+            toggle.classList.remove('active');
+            text.textContent = 'Mode Pro';
+        }
+
+        toggle.addEventListener('click', function() {
+            var isPro = document.body.classList.toggle('mode-pro');
+            toggle.classList.toggle('active');
+            text.textContent = isPro ? 'Mode Pro' : 'Mode Galaxie';
+            localStorage.setItem('nexusai-mode', isPro ? 'pro' : 'galaxie');
+        });
     })();
 
     // ════════════════════════════════════════════════
