@@ -17,15 +17,15 @@
         }
 
         :root {
-            --bg: #ffffff;
-            --text: #0a0a0a;
-            --text-secondary: #6b7280;
-            --accent: #0a0a0a;
-            --accent-light: #f3f4f6;
+            --bg: #030108;
+            --text: #f0f0f5;
+            --text-secondary: #9ca3af;
+            --accent: #f0f0f5;
+            --accent-light: rgba(255,255,255,0.04);
             --gradient-1: #6366f1;
             --gradient-2: #8b5cf6;
             --gradient-3: #a855f7;
-            --border: #e5e7eb;
+            --border: rgba(255,255,255,0.08);
         }
 
         html {
@@ -47,7 +47,7 @@
             width: 400px;
             height: 400px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
             pointer-events: none;
             z-index: 0;
             transform: translate(-50%, -50%);
@@ -57,7 +57,7 @@
         /* ── Navbar ── */
         .navbar {
             position: fixed;
-            top: 38px;
+            top: 0;
             width: 100%;
             z-index: 1000;
             padding: 1.2rem 3rem;
@@ -65,15 +65,15 @@
             justify-content: space-between;
             align-items: center;
             backdrop-filter: blur(20px);
-            background: rgba(255,255,255,0.8);
-            border-bottom: 1px solid rgba(0,0,0,0.04);
+            background: rgba(3,1,8,0.8);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .navbar.scrolled {
             padding: 0.8rem 3rem;
-            background: rgba(255,255,255,0.95);
-            box-shadow: 0 1px 30px rgba(0,0,0,0.06);
+            background: rgba(3,1,8,0.95);
+            box-shadow: 0 1px 30px rgba(0,0,0,0.3);
         }
 
         .logo {
@@ -158,9 +158,10 @@
             top: calc(100% + 14px);
             left: 50%;
             transform: translateX(-50%) translateY(10px);
-            background: white;
+            background: rgba(15,10,30,0.95);
+            backdrop-filter: blur(20px);
             border-radius: 14px;
-            box-shadow: 0 25px 80px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.04);
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
             padding: 0.4rem;
             min-width: 260px;
             opacity: 0;
@@ -177,9 +178,9 @@
             transform: translateX(-50%) rotate(45deg);
             width: 12px;
             height: 12px;
-            background: white;
-            border-top: 1px solid rgba(0,0,0,0.04);
-            border-left: 1px solid rgba(0,0,0,0.04);
+            background: rgba(15,10,30,0.95);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            border-left: 1px solid rgba(255,255,255,0.08);
             border-radius: 2px 0 0 0;
         }
         .nav-dropdown.open .nav-dropdown-menu {
@@ -246,7 +247,7 @@
         .nav-dropdown-menu a:hover::before { transform: translateY(-50%) scaleY(1); }
 
         .btn-primary {
-            background: var(--text);
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
             color: white;
             padding: 0.7rem 1.8rem;
             border-radius: 100px;
@@ -351,6 +352,17 @@
             opacity: 1;
             filter: blur(0px);
             transform: translateY(0) rotateX(0deg);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .title-line .char.revealed:hover {
+            color: transparent;
+            background: linear-gradient(135deg, #6366f1, #22d3ee, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 12px rgba(99,102,241,0.6));
+            transform: translateY(-4px) scale(1.12);
         }
 
         .title-line .char.space {
@@ -379,6 +391,7 @@
             filter: blur(8px);
             transform: translateY(20px);
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-right: 0.3em;
         }
 
         .hero-subtitle .word.revealed {
@@ -439,8 +452,8 @@
         /* ── Marquee ── */
         .marquee-section {
             padding: 2rem 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
             overflow: hidden;
         }
 
@@ -481,6 +494,45 @@
             margin: 0 auto;
         }
 
+        /* Section ambient glow */
+        #domaines::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99,102,241,0.06), transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        #stack::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(34,211,238,0.05), transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        #processus::before {
+            content: '';
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(168,85,247,0.05), transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        #domaines, #stack, #processus, #configurateur {
+            position: relative;
+        }
+
         .section-label {
             font-size: 0.75rem;
             font-weight: 700;
@@ -518,7 +570,7 @@
             padding: 2.5rem;
             border-radius: 20px;
             border: 1px solid var(--border);
-            background: white;
+            background: rgba(255,255,255,0.03);
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
@@ -545,8 +597,8 @@
 
         .domain-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 25px 80px rgba(0,0,0,0.06);
-            border-color: transparent;
+            box-shadow: 0 25px 80px rgba(99,102,241,0.1);
+            border-color: rgba(99,102,241,0.2);
         }
 
         .domain-card:hover::before { opacity: 1; }
@@ -629,7 +681,7 @@
             padding: 1rem 1.5rem;
             border-radius: 14px;
             border: 1.5px solid var(--border);
-            background: white;
+            background: rgba(255,255,255,0.03);
             font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
             font-weight: 600;
@@ -647,9 +699,9 @@
         }
 
         .config-domain-btn.active {
-            background: var(--text);
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
             color: white;
-            border-color: var(--text);
+            border-color: var(--gradient-1);
             transform: translateX(6px);
         }
 
@@ -658,7 +710,7 @@
         }
 
         .config-preview {
-            background: #fafafa;
+            background: rgba(255,255,255,0.03);
             border-radius: 24px;
             border: 1px solid var(--border);
             padding: 3rem;
@@ -710,7 +762,7 @@
         }
 
         .config-agent {
-            background: white;
+            background: rgba(255,255,255,0.03);
             border-radius: 14px;
             padding: 1.2rem;
             border: 1px solid var(--border);
@@ -825,7 +877,7 @@
         .process-card {
             padding: 2.5rem;
             border-radius: 20px;
-            background: var(--accent-light);
+            background: rgba(255,255,255,0.03);
             position: relative;
             opacity: 0;
             transform: translateY(40px);
@@ -841,7 +893,7 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 4rem;
             font-weight: 800;
-            color: rgba(0,0,0,0.06);
+            color: rgba(255,255,255,0.06);
             line-height: 1;
             margin-bottom: 1rem;
         }
@@ -893,7 +945,7 @@
             width: 420px;
             border-radius: 24px;
             border: 1px solid var(--border);
-            background: white;
+            background: rgba(255,255,255,0.03);
             overflow: hidden;
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             opacity: 0;
@@ -962,7 +1014,7 @@
         }
 
         .testimonial-source.trustpilot {
-            background: #f0fdf4;
+            background: rgba(0,182,122,0.1);
             color: #00b67a;
         }
 
@@ -1062,7 +1114,7 @@
             padding: 3rem 2.5rem;
             border-radius: 24px;
             border: 1px solid rgba(99,102,241,0.08);
-            background: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.04);
             backdrop-filter: blur(20px);
             text-align: center;
             opacity: 0;
@@ -1141,7 +1193,7 @@
         }
 
         .pricing-card.featured .btn-primary {
-            background: white;
+            background: rgba(255,255,255,0.03);
             color: var(--text);
         }
 
@@ -1156,7 +1208,7 @@
             margin-bottom: 0.5rem;
         }
 
-        .pricing-badge.unique { background: #fef3c7; color: #92400e; }
+        .pricing-badge.unique { background: rgba(251,191,36,0.15); color: #fbbf24; }
         .pricing-badge.popular { background: rgba(129,140,248,0.2); color: #818cf8; }
 
         .pricing-old-price {
@@ -1216,7 +1268,7 @@
             top: 3px; left: 3px;
             width: 18px; height: 18px;
             border-radius: 50%;
-            background: white;
+            background: rgba(255,255,255,0.03);
             transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
             box-shadow: 0 1px 4px rgba(0,0,0,0.15);
         }
@@ -1353,7 +1405,7 @@
             padding: 3rem 2.5rem;
             border-radius: 24px;
             border: 1px solid var(--border);
-            background: white;
+            background: rgba(255,255,255,0.03);
             box-shadow: 0 20px 60px rgba(0,0,0,0.04);
         }
         .crew-builder-header {
@@ -1514,7 +1566,7 @@
             text-align: center;
         }
         .risk-reversal-card {
-            background: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.04);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(99,102,241,0.1);
             border-radius: 24px;
@@ -1566,7 +1618,7 @@
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background: white;
+            background: rgba(255,255,255,0.03);
             border: 3px solid #e5e7eb;
             margin: 0 auto 0.8rem;
             display: flex;
@@ -1706,7 +1758,7 @@
             bottom: -300px;
             right: 2rem;
             width: 380px;
-            background: white;
+            background: rgba(255,255,255,0.03);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px var(--border);
             z-index: 999;
@@ -1791,7 +1843,7 @@
         }
 
         .roi-calculator {
-            background: white;
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--border);
             border-radius: 24px;
             padding: 3rem;
@@ -1955,7 +2007,7 @@
         .roi-bar-track {
             flex: 1;
             height: 40px;
-            background: linear-gradient(135deg, #f8f9ff, #f1f3f9);
+            background: rgba(255,255,255,0.04);
             border-radius: 12px;
             overflow: hidden;
             position: relative;
@@ -2006,7 +2058,7 @@
             position: absolute;
             inset: 0;
             border-radius: 50%;
-            background: white;
+            background: rgba(255,255,255,0.03);
             z-index: -1;
         }
         .roi-savings-circle-text {
@@ -2114,7 +2166,7 @@
         }
 
         .form-container {
-            background: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.04);
             backdrop-filter: blur(20px);
             border-radius: 24px;
             border: 1px solid rgba(99,102,241,0.1);
@@ -2167,18 +2219,19 @@
             border: 1.5px solid rgba(99,102,241,0.1);
             font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
-            background: rgba(248,249,255,0.8);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
             transition: all 0.3s;
             outline: none;
         }
         .form-group input::placeholder,
-        .form-group textarea::placeholder { color: #b0b5c3; }
+        .form-group textarea::placeholder { color: rgba(255,255,255,0.3); }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             border-color: var(--gradient-1);
-            background: white;
+            background: rgba(255,255,255,0.03);
             box-shadow: 0 0 0 4px rgba(99,102,241,0.08), 0 4px 12px rgba(99,102,241,0.06);
         }
 
@@ -2224,7 +2277,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: white;
+            background: rgba(255,255,255,0.03);
             border: 2px solid var(--gradient-1);
             margin: 0 auto 0.6rem;
             display: flex;
@@ -2423,7 +2476,7 @@
             width: 56px;
             height: 56px;
             border-radius: 16px;
-            background: white;
+            background: rgba(255,255,255,0.03);
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -2936,7 +2989,7 @@
             transform: translateX(-50%);
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
             pointer-events: none;
         }
 
@@ -3073,7 +3126,7 @@
         .loader {
             position: fixed;
             inset: 0;
-            background: white;
+            background: var(--bg);
             z-index: 9999;
             display: flex;
             align-items: center;
@@ -3128,7 +3181,7 @@
             position: fixed;
             bottom: 6.5rem;
             right: 2rem;
-            background: white;
+            background: rgba(255,255,255,0.03);
             border: 1px solid rgba(99,102,241,0.1);
             border-radius: 16px;
             padding: 1rem 1.2rem;
@@ -3155,7 +3208,7 @@
             width: 380px;
             max-height: 520px;
             border-radius: 20px;
-            background: rgba(255,255,255,0.95);
+            background: rgba(3,1,8,0.95);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(99,102,241,0.12);
             box-shadow: 0 20px 60px rgba(0,0,0,0.12);
@@ -3259,7 +3312,8 @@
             font-family: 'Inter', sans-serif;
             font-size: 0.85rem;
             outline: none;
-            background: rgba(248,249,255,0.8);
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
             transition: all 0.3s;
         }
         .nxa-chat-input:focus { border-color: var(--gradient-1); box-shadow: 0 0 0 3px rgba(99,102,241,0.08); }
@@ -3286,7 +3340,7 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            opacity: 0.6;
+            opacity: 0.85;
             pointer-events: none;
         }
         /* Ensure all content is above starfield */
@@ -5502,6 +5556,47 @@
         })();
 
         // ════════════════════════════════════════════════
+        // ── HERO MAGNETIC LETTER EFFECT ──
+        // ════════════════════════════════════════════════
+        (function() {
+            var heroTitle = document.getElementById('heroTitle');
+            if (!heroTitle) return;
+            var chars = heroTitle.querySelectorAll('.char');
+            heroTitle.addEventListener('mousemove', function(e) {
+                var rect = heroTitle.getBoundingClientRect();
+                var mx = e.clientX;
+                var my = e.clientY;
+                chars.forEach(function(ch) {
+                    var cr = ch.getBoundingClientRect();
+                    var cx = cr.left + cr.width / 2;
+                    var cy = cr.top + cr.height / 2;
+                    var dx = mx - cx;
+                    var dy = my - cy;
+                    var dist = Math.sqrt(dx * dx + dy * dy);
+                    var maxDist = 100;
+                    if (dist < maxDist) {
+                        var force = (1 - dist / maxDist) * 8;
+                        var angle = Math.atan2(dy, dx);
+                        var tx = -Math.cos(angle) * force;
+                        var ty = -Math.sin(angle) * force;
+                        ch.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
+                        var glow = (1 - dist / maxDist);
+                        ch.style.textShadow = '0 0 ' + (glow * 20) + 'px rgba(99,102,241,' + (glow * 0.8) + '), 0 0 ' + (glow * 40) + 'px rgba(34,211,238,' + (glow * 0.4) + ')';
+                    } else {
+                        ch.style.transform = '';
+                        ch.style.textShadow = '';
+                    }
+                });
+            });
+            heroTitle.addEventListener('mouseleave', function() {
+                chars.forEach(function(ch) {
+                    ch.style.transform = '';
+                    ch.style.textShadow = '';
+                });
+            });
+        })();
+
+        // ════════════════════════════════════════════════
         // ── GAME CHANGER: Three.js Neural Network 3D ──
         // ════════════════════════════════════════════════
         (function() {
@@ -6033,33 +6128,45 @@
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         renderer.setClearColor(0x000000, 0);
 
-        // Glow texture
-        var cv = document.createElement('canvas');
-        cv.width = cv.height = 64;
-        var ctx = cv.getContext('2d');
-        var g = ctx.createRadialGradient(32,32,0,32,32,32);
-        g.addColorStop(0, 'rgba(99,102,241,0.8)');
-        g.addColorStop(0.4, 'rgba(99,102,241,0.15)');
-        g.addColorStop(1, 'rgba(99,102,241,0)');
-        ctx.fillStyle = g;
-        ctx.fillRect(0,0,64,64);
-        var glowTex = new THREE.CanvasTexture(cv);
+        // Glow textures — multi-color
+        function makeGlow(r, g2, b) {
+            var cv2 = document.createElement('canvas');
+            cv2.width = cv2.height = 64;
+            var ctx2 = cv2.getContext('2d');
+            var gr = ctx2.createRadialGradient(32,32,0,32,32,32);
+            gr.addColorStop(0, 'rgba('+r+','+g2+','+b+',0.8)');
+            gr.addColorStop(0.4, 'rgba('+r+','+g2+','+b+',0.15)');
+            gr.addColorStop(1, 'rgba('+r+','+g2+','+b+',0)');
+            ctx2.fillStyle = gr;
+            ctx2.fillRect(0,0,64,64);
+            return new THREE.CanvasTexture(cv2);
+        }
+        var glowTextures = [
+            makeGlow(99, 102, 241),   // indigo
+            makeGlow(34, 211, 238),   // cyan
+            makeGlow(59, 130, 246),   // blue
+            makeGlow(168, 85, 247),   // violet
+            makeGlow(139, 92, 246),   // purple
+            makeGlow(14, 165, 233)    // sky
+        ];
+        var particleColors = [0x6366f1, 0x22d3ee, 0x3b82f6, 0xa855f7, 0x8b5cf6, 0x0ea5e9];
 
         var group = new THREE.Group();
 
-        // 400 dust particles
+        // 500 dust particles — multi-color
         var dustParticles = [];
-        for (var i = 0; i < 400; i++) {
+        for (var i = 0; i < 500; i++) {
+            var ci = Math.floor(Math.random() * glowTextures.length);
             var mat = new THREE.SpriteMaterial({
-                map: glowTex, transparent: true, opacity: 0.15 + Math.random() * 0.15,
-                blending: THREE.AdditiveBlending, color: 0x6366f1
+                map: glowTextures[ci], transparent: true, opacity: 0.12 + Math.random() * 0.18,
+                blending: THREE.AdditiveBlending, color: particleColors[ci]
             });
             var sprite = new THREE.Sprite(mat);
-            var px = (Math.random() - 0.5) * 200;
-            var py = (Math.random() - 0.5) * 200;
-            var pz = (Math.random() - 0.5) * 50;
+            var px = (Math.random() - 0.5) * 250;
+            var py = (Math.random() - 0.5) * 250;
+            var pz = (Math.random() - 0.5) * 60;
             sprite.position.set(px, py, pz);
-            var sz = 0.15 + Math.random() * 0.3;
+            var sz = 0.15 + Math.random() * 0.4;
             sprite.scale.set(sz, sz, 1);
             group.add(sprite);
             dustParticles.push({
@@ -6083,17 +6190,18 @@
             var ay = (Math.random() - 0.5) * 160;
             var az = (Math.random() - 0.5) * 40;
 
-            // Core sphere
+            // Core sphere — varied colors
+            var nodeColor = particleColors[idx % particleColors.length];
             var geo = new THREE.SphereGeometry(0.15, 8, 8);
-            var meshMat = new THREE.MeshBasicMaterial({ color: idx < 5 ? 0xa78bfa : 0x6366f1 });
+            var meshMat = new THREE.MeshBasicMaterial({ color: nodeColor });
             var mesh = new THREE.Mesh(geo, meshMat);
             mesh.position.set(ax, ay, az);
             group.add(mesh);
 
             // Glow sprite
             var sMat = new THREE.SpriteMaterial({
-                map: glowTex, transparent: true, opacity: idx < 5 ? 0.5 : 0.3,
-                blending: THREE.AdditiveBlending, color: idx < 5 ? 0xa78bfa : 0x6366f1
+                map: glowTextures[idx % glowTextures.length], transparent: true, opacity: idx < 5 ? 0.5 : 0.3,
+                blending: THREE.AdditiveBlending, color: nodeColor
             });
             var spr = new THREE.Sprite(sMat);
             spr.position.copy(mesh.position);
@@ -6120,8 +6228,9 @@
                     var lineGeo = new THREE.BufferGeometry();
                     var positions = new Float32Array(6);
                     lineGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    var lineColor = particleColors[Math.floor(Math.random() * particleColors.length)];
                     var lineMat = new THREE.LineBasicMaterial({
-                        color: 0x6366f1, transparent: true,
+                        color: lineColor, transparent: true,
                         opacity: Math.max(0.02, 0.08 * (1 - dist / 40)),
                         blending: THREE.AdditiveBlending
                     });
