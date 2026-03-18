@@ -3685,7 +3685,7 @@
             overflow: visible;
         }
 
-        /* ── 3D Starfield Background ── */
+        /* ── 3D Scroll-Linked Background ── */
         #agentStarfield {
             position: fixed;
             top: 0;
@@ -3693,7 +3693,7 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            opacity: 0.85;
+            opacity: 0.9;
             pointer-events: none;
         }
         /* Ensure all content is above starfield */
@@ -3702,6 +3702,65 @@
             position: relative;
             z-index: 1;
         }
+        /* ── Scroll Depth Indicator ── */
+        .scroll-depth-indicator {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+        .scroll-depth-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            position: relative;
+        }
+        .scroll-depth-dot.active {
+            background: var(--gradient-1);
+            box-shadow: 0 0 12px rgba(99,102,241,0.6);
+            transform: scale(1.5);
+        }
+        .scroll-depth-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.4);
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .scroll-depth-dot:hover::after,
+        .scroll-depth-dot.active::after {
+            opacity: 1;
+        }
+        .scroll-depth-line {
+            width: 1px;
+            height: 0%;
+            background: linear-gradient(to bottom, var(--gradient-1), var(--gradient-3));
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: height 0.3s;
+            z-index: -1;
+        }
+        body.mode-pro .scroll-depth-indicator { display: none; }
+        @media (max-width: 768px) { .scroll-depth-indicator { display: none; } }
     </style>
 </head>
 <body>
@@ -6348,7 +6407,18 @@
         })();
     </script>
 
-    <!-- 3D Agent Starfield Canvas -->
+    <!-- Scroll Depth Indicator -->
+    <div class="scroll-depth-indicator" id="scrollDepthIndicator">
+        <div class="scroll-depth-dot" data-label="Accueil" data-section=".hero"></div>
+        <div class="scroll-depth-dot" data-label="Domaines" data-section="#domaines"></div>
+        <div class="scroll-depth-dot" data-label="Tech Stack" data-section="#stack"></div>
+        <div class="scroll-depth-dot" data-label="Processus" data-section="#processus"></div>
+        <div class="scroll-depth-dot" data-label="Tarifs" data-section="#tarifs"></div>
+        <div class="scroll-depth-dot" data-label="ROI" data-section="#roi"></div>
+        <div class="scroll-depth-dot" data-label="Contact" data-section="#contact"></div>
+    </div>
+
+    <!-- 3D Scroll-Linked Canvas -->
     <canvas id="agentStarfield"></canvas>
 
     <!-- AI Chat Widget -->
@@ -6544,187 +6614,361 @@
     })();
 
     // ════════════════════════════════════════════════
-    // ── 3D AGENT STARFIELD BACKGROUND ──
+    // ── SCROLL-LINKED 3D STRUCTURE NAVIGATION ──
     // ════════════════════════════════════════════════
     (function() {
-        if (typeof THREE === 'undefined') return;
+        if (typeof THREE === 'undefined' || typeof gsap === 'undefined') return;
         var canvas = document.getElementById('agentStarfield');
         if (!canvas) return;
 
         var scene = new THREE.Scene();
-        var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
-        camera.position.set(0, 0, 80);
+        var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1200);
+        camera.position.set(0, 0, 60);
 
         var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         renderer.setClearColor(0x000000, 0);
 
-        // Glow textures — multi-color
-        function makeGlow(r, g2, b) {
-            var cv2 = document.createElement('canvas');
-            cv2.width = cv2.height = 64;
-            var ctx2 = cv2.getContext('2d');
-            var gr = ctx2.createRadialGradient(32,32,0,32,32,32);
-            gr.addColorStop(0, 'rgba('+r+','+g2+','+b+',0.8)');
-            gr.addColorStop(0.4, 'rgba('+r+','+g2+','+b+',0.15)');
-            gr.addColorStop(1, 'rgba('+r+','+g2+','+b+',0)');
-            ctx2.fillStyle = gr;
-            ctx2.fillRect(0,0,64,64);
-            return new THREE.CanvasTexture(cv2);
+        // ── Glow textures ──
+        function makeGlow(r, g, b) {
+            var cv = document.createElement('canvas');
+            cv.width = cv.height = 64;
+            var ctx = cv.getContext('2d');
+            var gr = ctx.createRadialGradient(32,32,0,32,32,32);
+            gr.addColorStop(0, 'rgba('+r+','+g+','+b+',0.9)');
+            gr.addColorStop(0.3, 'rgba('+r+','+g+','+b+',0.2)');
+            gr.addColorStop(1, 'rgba('+r+','+g+','+b+',0)');
+            ctx.fillStyle = gr;
+            ctx.fillRect(0,0,64,64);
+            return new THREE.CanvasTexture(cv);
         }
         var glowTextures = [
-            makeGlow(99, 102, 241),   // indigo
-            makeGlow(34, 211, 238),   // cyan
-            makeGlow(59, 130, 246),   // blue
-            makeGlow(168, 85, 247),   // violet
-            makeGlow(139, 92, 246),   // purple
-            makeGlow(14, 165, 233)    // sky
+            makeGlow(99, 102, 241),
+            makeGlow(34, 211, 238),
+            makeGlow(59, 130, 246),
+            makeGlow(168, 85, 247),
+            makeGlow(139, 92, 246),
+            makeGlow(14, 165, 233)
         ];
-        var particleColors = [0x6366f1, 0x22d3ee, 0x3b82f6, 0xa855f7, 0x8b5cf6, 0x0ea5e9];
+        var pColors = [0x6366f1, 0x22d3ee, 0x3b82f6, 0xa855f7, 0x8b5cf6, 0x0ea5e9];
 
-        var group = new THREE.Group();
+        // ── SCENE DEPTH: The 3D world extends along Z (0 to -800) ──
+        // Camera flies through it as user scrolls
 
-        // 500 dust particles — multi-color
-        var dustParticles = [];
-        for (var i = 0; i < 500; i++) {
-            var ci = Math.floor(Math.random() * glowTextures.length);
-            var mat = new THREE.SpriteMaterial({
-                map: glowTextures[ci], transparent: true, opacity: 0.12 + Math.random() * 0.18,
-                blending: THREE.AdditiveBlending, color: particleColors[ci]
-            });
-            var sprite = new THREE.Sprite(mat);
-            var px = (Math.random() - 0.5) * 250;
-            var py = (Math.random() - 0.5) * 250;
-            var pz = (Math.random() - 0.5) * 60;
-            sprite.position.set(px, py, pz);
-            var sz = 0.15 + Math.random() * 0.4;
-            sprite.scale.set(sz, sz, 1);
-            group.add(sprite);
-            dustParticles.push({
-                sprite: sprite,
-                baseX: px, baseY: py,
-                driftX: (Math.random() - 0.5) * 0.003,
-                driftY: (Math.random() - 0.5) * 0.002,
-                phase: Math.random() * Math.PI * 2,
-                speed: 0.2 + Math.random() * 0.3
-            });
-        }
-
-        // 23 Agent nodes
-        var agentNames = ['NATHAN','VIZION','SCOUT','LENS','SPARK','CREA','SCRIPT','VISUAL','EDITOR',
-            'FORGE','RUNNER','PIPELINE','SENTINEL','CORTEX','MEMORY','VECTOR','BRIDGE','RELAY',
-            'TUNER','PROFILER','LINGUIST','ANALYST','ORACLE'];
-        var agentNodes = [];
-
-        agentNames.forEach(function(name, idx) {
-            var ax = (Math.random() - 0.5) * 160;
-            var ay = (Math.random() - 0.5) * 160;
-            var az = (Math.random() - 0.5) * 40;
-
-            // Core sphere — varied colors
-            var nodeColor = particleColors[idx % particleColors.length];
-            var geo = new THREE.SphereGeometry(0.15, 8, 8);
-            var meshMat = new THREE.MeshBasicMaterial({ color: nodeColor });
-            var mesh = new THREE.Mesh(geo, meshMat);
-            mesh.position.set(ax, ay, az);
-            group.add(mesh);
-
-            // Glow sprite
-            var sMat = new THREE.SpriteMaterial({
-                map: glowTextures[idx % glowTextures.length], transparent: true, opacity: idx < 5 ? 0.5 : 0.3,
-                blending: THREE.AdditiveBlending, color: nodeColor
-            });
+        // ── ZONE 1: HERO — Neural cluster (Z: 0 to -50) ──
+        var heroGroup = new THREE.Group();
+        var heroNodes = [];
+        for (var i = 0; i < 18; i++) {
+            var phi = Math.acos(-1 + (2 * i) / 18);
+            var theta = Math.sqrt(18 * Math.PI) * phi;
+            var r = 12;
+            var x = r * Math.cos(theta) * Math.sin(phi);
+            var y = r * Math.sin(theta) * Math.sin(phi);
+            var z = r * Math.cos(phi) * 0.6;
+            var ci = i % pColors.length;
+            var geo = new THREE.SphereGeometry(0.25, 12, 12);
+            var mat = new THREE.MeshBasicMaterial({ color: pColors[ci] });
+            var mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(x, y, z);
+            heroGroup.add(mesh);
+            var sMat = new THREE.SpriteMaterial({ map: glowTextures[ci], transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending });
             var spr = new THREE.Sprite(sMat);
             spr.position.copy(mesh.position);
-            var glowSize = 1.5 + Math.random() * 1.5;
-            spr.scale.set(glowSize, glowSize, 1);
-            group.add(spr);
-
-            agentNodes.push({
-                mesh: mesh, glow: spr,
-                baseX: ax, baseY: ay, baseZ: az,
-                phase: Math.random() * Math.PI * 2,
-                speed: 0.1 + Math.random() * 0.2,
-                driftX: (Math.random() - 0.5) * 0.005,
-                driftY: (Math.random() - 0.5) * 0.005
-            });
-        });
-
-        // Constellation lines between close agents
-        var constellationLines = [];
-        for (var a = 0; a < agentNodes.length; a++) {
-            for (var b = a + 1; b < agentNodes.length; b++) {
-                var dist = agentNodes[a].mesh.position.distanceTo(agentNodes[b].mesh.position);
-                if (dist < 40) {
-                    var lineGeo = new THREE.BufferGeometry();
-                    var positions = new Float32Array(6);
-                    lineGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                    var lineColor = particleColors[Math.floor(Math.random() * particleColors.length)];
-                    var lineMat = new THREE.LineBasicMaterial({
-                        color: lineColor, transparent: true,
-                        opacity: Math.max(0.02, 0.08 * (1 - dist / 40)),
-                        blending: THREE.AdditiveBlending
-                    });
-                    var line = new THREE.Line(lineGeo, lineMat);
-                    group.add(line);
-                    constellationLines.push({ line: line, a: agentNodes[a], b: agentNodes[b], baseDist: dist, mat: lineMat });
+            spr.scale.set(2, 2, 1);
+            heroGroup.add(spr);
+            heroNodes.push({ mesh: mesh, glow: spr, ox: x, oy: y, oz: z, phase: Math.random() * 6.28, speed: 0.2 + Math.random() * 0.3 });
+        }
+        // Hero connections
+        var heroLines = [];
+        for (var a = 0; a < heroNodes.length; a++) {
+            for (var b = a + 1; b < heroNodes.length; b++) {
+                if (heroNodes[a].mesh.position.distanceTo(heroNodes[b].mesh.position) < 16) {
+                    var lg = new THREE.BufferGeometry();
+                    var pos = new Float32Array(6);
+                    lg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+                    var lm = new THREE.LineBasicMaterial({ color: pColors[a % pColors.length], transparent: true, opacity: 0.06, blending: THREE.AdditiveBlending });
+                    var ln = new THREE.Line(lg, lm);
+                    heroGroup.add(ln);
+                    heroLines.push({ line: ln, a: heroNodes[a], b: heroNodes[b], mat: lm });
                 }
             }
         }
+        heroGroup.position.set(0, 0, -20);
+        scene.add(heroGroup);
 
-        scene.add(group);
+        // ── ZONE 2: DOMAINS — Floating rings & toruses (Z: -100 to -200) ──
+        var domainGroup = new THREE.Group();
+        var domainRings = [];
+        var ringColors = [0x6366f1, 0x22d3ee, 0xa855f7, 0x0ea5e9, 0x3b82f6];
+        for (var i = 0; i < 5; i++) {
+            var torusGeo = new THREE.TorusGeometry(3 + i * 1.5, 0.08, 8, 48);
+            var torusMat = new THREE.MeshBasicMaterial({ color: ringColors[i], transparent: true, opacity: 0.35 });
+            var torus = new THREE.Mesh(torusGeo, torusMat);
+            torus.position.set((i - 2) * 8, Math.sin(i) * 5, -140 + i * 5);
+            torus.rotation.x = Math.PI * 0.3 + i * 0.2;
+            torus.rotation.z = i * 0.4;
+            domainGroup.add(torus);
+            domainRings.push({ mesh: torus, phase: i * 1.2, speed: 0.15 + i * 0.05, baseRx: torus.rotation.x, baseRz: torus.rotation.z });
+            // Glow
+            var glSpr = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTextures[i], transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending }));
+            glSpr.position.copy(torus.position);
+            glSpr.scale.set(8 + i * 2, 8 + i * 2, 1);
+            domainGroup.add(glSpr);
+        }
+        scene.add(domainGroup);
 
+        // ── ZONE 3: STACK — DNA helix data streams (Z: -250 to -350) ──
+        var helixGroup = new THREE.Group();
+        var helixParticles = [];
+        for (var i = 0; i < 80; i++) {
+            var t2 = i / 80 * Math.PI * 4;
+            var hx = Math.cos(t2) * 8;
+            var hy = Math.sin(t2) * 8;
+            var hz = -280 + (i / 80) * 80;
+            var ci2 = i % pColors.length;
+            var sM = new THREE.SpriteMaterial({ map: glowTextures[ci2], transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, color: pColors[ci2] });
+            var sp = new THREE.Sprite(sM);
+            sp.position.set(hx, hy, hz);
+            sp.scale.set(0.8, 0.8, 1);
+            helixGroup.add(sp);
+            helixParticles.push({ sprite: sp, baseAngle: t2, baseZ: hz, idx: i });
+            // Mirror strand
+            var sM2 = new THREE.SpriteMaterial({ map: glowTextures[(ci2 + 3) % glowTextures.length], transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending, color: pColors[(ci2 + 3) % pColors.length] });
+            var sp2 = new THREE.Sprite(sM2);
+            sp2.position.set(-hx, -hy, hz);
+            sp2.scale.set(0.6, 0.6, 1);
+            helixGroup.add(sp2);
+            helixParticles.push({ sprite: sp2, baseAngle: t2 + Math.PI, baseZ: hz, idx: i });
+            // Cross-links every 10
+            if (i % 10 === 0) {
+                var crossGeo = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(hx, hy, hz),
+                    new THREE.Vector3(-hx, -hy, hz)
+                ]);
+                var crossMat = new THREE.LineBasicMaterial({ color: pColors[ci2], transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending });
+                helixGroup.add(new THREE.Line(crossGeo, crossMat));
+            }
+        }
+        scene.add(helixGroup);
+
+        // ── ZONE 4: PRICING — Crystal prisms (Z: -400 to -500) ──
+        var prismGroup = new THREE.Group();
+        var prisms = [];
+        var prismData = [
+            { x: -15, y: 0, z: -430, scale: 2.5, color: 0x6366f1 },
+            { x: 0, y: 3, z: -450, scale: 3.5, color: 0x8b5cf6 },
+            { x: 15, y: -1, z: -440, scale: 2.5, color: 0xa855f7 }
+        ];
+        prismData.forEach(function(pd, idx) {
+            var prismGeo = new THREE.OctahedronGeometry(pd.scale, 0);
+            var prismMat = new THREE.MeshBasicMaterial({ color: pd.color, wireframe: true, transparent: true, opacity: 0.4 });
+            var prism = new THREE.Mesh(prismGeo, prismMat);
+            prism.position.set(pd.x, pd.y, pd.z);
+            prismGroup.add(prism);
+            // Inner solid
+            var innerGeo = new THREE.OctahedronGeometry(pd.scale * 0.4, 0);
+            var innerMat = new THREE.MeshBasicMaterial({ color: pd.color, transparent: true, opacity: 0.15 });
+            var inner = new THREE.Mesh(innerGeo, innerMat);
+            inner.position.copy(prism.position);
+            prismGroup.add(inner);
+            // Glow
+            var gSpr = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTextures[idx * 2], transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending }));
+            gSpr.position.copy(prism.position);
+            gSpr.scale.set(pd.scale * 4, pd.scale * 4, 1);
+            prismGroup.add(gSpr);
+            prisms.push({ outer: prism, inner: inner, phase: idx * 2.1, speed: 0.2 + idx * 0.1 });
+        });
+        scene.add(prismGroup);
+
+        // ── ZONE 5: ROI — Wireframe globe (Z: -550 to -650) ──
+        var globeGroup = new THREE.Group();
+        var globeGeo = new THREE.IcosahedronGeometry(12, 2);
+        var globeMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, wireframe: true, transparent: true, opacity: 0.15 });
+        var globe = new THREE.Mesh(globeGeo, globeMat);
+        globe.position.set(0, 0, -600);
+        globeGroup.add(globe);
+        // Inner globe
+        var innerGlobe = new THREE.Mesh(
+            new THREE.IcosahedronGeometry(8, 1),
+            new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true, transparent: true, opacity: 0.08 })
+        );
+        innerGlobe.position.copy(globe.position);
+        globeGroup.add(innerGlobe);
+        // Globe glow
+        var globeGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTextures[1], transparent: true, opacity: 0.15, blending: THREE.AdditiveBlending }));
+        globeGlow.position.copy(globe.position);
+        globeGlow.scale.set(30, 30, 1);
+        globeGroup.add(globeGlow);
+        // Orbiting dots
+        var orbitDots = [];
+        for (var i = 0; i < 12; i++) {
+            var dMat = new THREE.SpriteMaterial({ map: glowTextures[i % glowTextures.length], transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, color: pColors[i % pColors.length] });
+            var dot = new THREE.Sprite(dMat);
+            dot.scale.set(0.8, 0.8, 1);
+            globeGroup.add(dot);
+            orbitDots.push({ sprite: dot, angle: (i / 12) * Math.PI * 2, radius: 14 + (i % 3) * 2, speed: 0.3 + (i % 4) * 0.1, tilt: (i % 3) * 0.3 });
+        }
+        scene.add(globeGroup);
+
+        // ── AMBIENT DUST — spread across the full depth ──
+        var dustParticles = [];
+        for (var i = 0; i < 600; i++) {
+            var ci = Math.floor(Math.random() * glowTextures.length);
+            var dMat = new THREE.SpriteMaterial({ map: glowTextures[ci], transparent: true, opacity: 0.08 + Math.random() * 0.12, blending: THREE.AdditiveBlending, color: pColors[ci] });
+            var dSpr = new THREE.Sprite(dMat);
+            var dx = (Math.random() - 0.5) * 120;
+            var dy = (Math.random() - 0.5) * 80;
+            var dz = Math.random() * -700;
+            dSpr.position.set(dx, dy, dz);
+            var sz = 0.1 + Math.random() * 0.35;
+            dSpr.scale.set(sz, sz, 1);
+            scene.add(dSpr);
+            dustParticles.push({ sprite: dSpr, ox: dx, oy: dy, phase: Math.random() * 6.28, speed: 0.15 + Math.random() * 0.25 });
+        }
+
+        // ── CAMERA PATH — CatmullRomCurve3 ──
+        var cameraPath = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(0, 0, 60),       // Hero — start
+            new THREE.Vector3(5, 3, 20),        // Hero — close to neural cluster
+            new THREE.Vector3(-3, -2, -60),     // Marquee / transition
+            new THREE.Vector3(8, 5, -120),      // Domains — approach rings
+            new THREE.Vector3(-5, -3, -180),    // Domains — through rings
+            new THREE.Vector3(3, 2, -250),      // Stack — approach helix
+            new THREE.Vector3(-8, 4, -320),     // Stack — through helix
+            new THREE.Vector3(6, -2, -400),     // Pricing — approach prisms
+            new THREE.Vector3(-4, 3, -470),     // Pricing — among prisms
+            new THREE.Vector3(2, -1, -540),     // ROI — approach globe
+            new THREE.Vector3(0, 0, -590),      // ROI — close to globe
+            new THREE.Vector3(0, 5, -650)       // Contact — pull back
+        ], false, 'catmullrom', 0.3);
+
+        var lookAtPath = new THREE.CatmullRomCurve3([
+            new THREE.Vector3(0, 0, -20),
+            new THREE.Vector3(0, 0, -30),
+            new THREE.Vector3(0, 0, -100),
+            new THREE.Vector3(0, 2, -150),
+            new THREE.Vector3(0, 0, -220),
+            new THREE.Vector3(0, 0, -300),
+            new THREE.Vector3(0, 0, -360),
+            new THREE.Vector3(0, 0, -450),
+            new THREE.Vector3(0, 0, -500),
+            new THREE.Vector3(0, 0, -600),
+            new THREE.Vector3(0, 0, -630),
+            new THREE.Vector3(0, 0, -700)
+        ], false, 'catmullrom', 0.3);
+
+        // ── Scroll progress tracking ──
+        var scrollProgress = { value: 0 };
         var mouseX = 0, mouseY = 0, targetMX = 0, targetMY = 0;
+
         document.addEventListener('mousemove', function(e) {
-            targetMX = (e.clientX / window.innerWidth - 0.5) * 6;
-            targetMY = (e.clientY / window.innerHeight - 0.5) * 4;
+            targetMX = (e.clientX / window.innerWidth - 0.5) * 4;
+            targetMY = (e.clientY / window.innerHeight - 0.5) * 3;
         });
 
+        // Use GSAP ScrollTrigger to drive scroll progress
+        gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.create({
+            trigger: document.body,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 1.5,
+            onUpdate: function(self) {
+                scrollProgress.value = self.progress;
+            }
+        });
+
+        // ── Animation loop ──
         var clock = new THREE.Clock();
+        var smoothProgress = 0;
 
         function animate() {
             requestAnimationFrame(animate);
             var t = clock.getElapsedTime();
 
-            // Mouse parallax
-            mouseX += (targetMX - mouseX) * 0.02;
-            mouseY += (targetMY - mouseY) * 0.02;
-            camera.position.x = mouseX;
-            camera.position.y = -mouseY;
+            // Smooth interpolation of scroll progress
+            smoothProgress += (scrollProgress.value - smoothProgress) * 0.06;
+            var p = Math.max(0, Math.min(1, smoothProgress));
 
-            // Scroll awareness
-            var scrollY = window.scrollY || 0;
-            camera.position.y += scrollY * 0.02;
+            // Get camera position from path
+            var camPos = cameraPath.getPointAt(p);
+            var lookPos = lookAtPath.getPointAt(p);
 
-            camera.lookAt(mouseX * 0.5, -mouseY * 0.5 + scrollY * 0.01, 0);
+            // Mouse parallax offset (diminished as you go deeper)
+            mouseX += (targetMX - mouseX) * 0.03;
+            mouseY += (targetMY - mouseY) * 0.03;
+            var parallaxFade = 1 - p * 0.3;
 
-            // Animate dust
-            dustParticles.forEach(function(p) {
-                p.sprite.position.x = p.baseX + Math.sin(t * p.speed + p.phase) * 2;
-                p.sprite.position.y = p.baseY + Math.cos(t * p.speed * 0.7 + p.phase) * 1.5;
+            camera.position.set(
+                camPos.x + mouseX * parallaxFade,
+                camPos.y + mouseY * parallaxFade * 0.5,
+                camPos.z
+            );
+            camera.lookAt(
+                lookPos.x + mouseX * 0.2,
+                lookPos.y + mouseY * 0.15,
+                lookPos.z
+            );
+
+            // ── Animate hero neural cluster ──
+            heroNodes.forEach(function(n) {
+                var nx = n.ox + Math.sin(t * n.speed + n.phase) * 1.2;
+                var ny = n.oy + Math.cos(t * n.speed * 0.8 + n.phase) * 1;
+                var nz = n.oz + Math.sin(t * n.speed * 0.5 + n.phase * 2) * 0.6;
+                n.mesh.position.set(nx, ny, nz - 20);
+                n.glow.position.copy(n.mesh.position);
             });
-
-            // Animate agent nodes
-            agentNodes.forEach(function(n) {
-                var nx = n.baseX + Math.sin(t * n.speed + n.phase) * 1.5;
-                var ny = n.baseY + Math.cos(t * n.speed * 0.8 + n.phase) * 1.2;
-                var nz = n.baseZ + Math.sin(t * n.speed * 0.5 + n.phase * 2) * 0.8;
-                n.mesh.position.set(nx, ny, nz);
-                n.glow.position.set(nx, ny, nz);
-            });
-
-            // Update constellation lines
-            constellationLines.forEach(function(c) {
-                var posArr = c.line.geometry.attributes.position.array;
-                posArr[0] = c.a.mesh.position.x;
-                posArr[1] = c.a.mesh.position.y;
-                posArr[2] = c.a.mesh.position.z;
-                posArr[3] = c.b.mesh.position.x;
-                posArr[4] = c.b.mesh.position.y;
-                posArr[5] = c.b.mesh.position.z;
+            heroLines.forEach(function(c) {
+                var pa = c.line.geometry.attributes.position.array;
+                pa[0] = c.a.mesh.position.x; pa[1] = c.a.mesh.position.y; pa[2] = c.a.mesh.position.z;
+                pa[3] = c.b.mesh.position.x; pa[4] = c.b.mesh.position.y; pa[5] = c.b.mesh.position.z;
                 c.line.geometry.attributes.position.needsUpdate = true;
-                c.mat.opacity = Math.max(0.01, 0.06 * (1 - c.a.mesh.position.distanceTo(c.b.mesh.position) / 40)) * (0.7 + 0.3 * Math.sin(t * 0.5));
+                c.mat.opacity = 0.04 + 0.03 * Math.sin(t * 0.7);
+            });
+            heroGroup.rotation.y = t * 0.05;
+
+            // ── Animate domain rings ──
+            domainRings.forEach(function(dr) {
+                dr.mesh.rotation.x = dr.baseRx + Math.sin(t * dr.speed + dr.phase) * 0.3;
+                dr.mesh.rotation.z = dr.baseRz + Math.cos(t * dr.speed * 0.7 + dr.phase) * 0.2;
+                dr.mesh.rotation.y = t * dr.speed * 0.5;
+            });
+
+            // ── Animate helix ──
+            helixParticles.forEach(function(hp) {
+                var angle = hp.baseAngle + t * 0.3;
+                hp.sprite.position.x = Math.cos(angle) * 8;
+                hp.sprite.position.y = Math.sin(angle) * 8;
+            });
+
+            // ── Animate prisms ──
+            prisms.forEach(function(pr) {
+                pr.outer.rotation.x = t * pr.speed * 0.3 + pr.phase;
+                pr.outer.rotation.y = t * pr.speed * 0.5;
+                pr.inner.rotation.x = -t * pr.speed * 0.4;
+                pr.inner.rotation.y = -t * pr.speed * 0.6;
+            });
+
+            // ── Animate globe ──
+            globe.rotation.y = t * 0.08;
+            globe.rotation.x = Math.sin(t * 0.05) * 0.1;
+            innerGlobe.rotation.y = -t * 0.12;
+            innerGlobe.rotation.z = t * 0.05;
+
+            orbitDots.forEach(function(od) {
+                var a2 = od.angle + t * od.speed;
+                od.sprite.position.set(
+                    Math.cos(a2) * od.radius + globe.position.x,
+                    Math.sin(a2 + od.tilt) * od.radius * 0.6 + globe.position.y,
+                    Math.sin(a2) * od.radius * 0.3 + globe.position.z
+                );
+            });
+
+            // ── Animate dust ──
+            dustParticles.forEach(function(dp) {
+                dp.sprite.position.x = dp.ox + Math.sin(t * dp.speed + dp.phase) * 1.5;
+                dp.sprite.position.y = dp.oy + Math.cos(t * dp.speed * 0.7 + dp.phase) * 1.2;
             });
 
             renderer.render(scene, camera);
@@ -7417,6 +7661,35 @@
                 }
             }
         });
+    })();
+
+    // ════════════════════════════════════════════════
+    // ── SCROLL DEPTH INDICATOR ──
+    // ════════════════════════════════════════════════
+    (function() {
+        var dots = document.querySelectorAll('.scroll-depth-dot');
+        if (!dots.length) return;
+
+        // Click to scroll to section
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                var target = document.querySelector(dot.dataset.section);
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Update active dot based on scroll position
+        function updateDots() {
+            var scrollY = window.scrollY;
+            var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            var progress = docHeight > 0 ? scrollY / docHeight : 0;
+            var activeIdx = Math.min(dots.length - 1, Math.floor(progress * dots.length));
+            dots.forEach(function(d, i) {
+                d.classList.toggle('active', i === activeIdx);
+            });
+        }
+        window.addEventListener('scroll', updateDots, { passive: true });
+        updateDots();
     })();
     </script>
 
