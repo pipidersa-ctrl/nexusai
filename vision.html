@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusAI — Notre Vision</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #030108;
+            --text: #ffffff;
+            --text-dim: #8b8fa3;
+            --gradient-1: #6366f1;
+            --gradient-2: #8b5cf6;
+            --gradient-3: #a855f7;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(3,1,8,0.7);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .navbar.scrolled {
+            padding: 0.8rem 3rem;
+            background: rgba(3,1,8,0.95);
+        }
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+        }
+        .logo-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: white; }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            color: white;
+            border: none;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99,102,241,0.35);
+        }
+
+        /* ── Hero ── */
+        .vision-hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        #visionCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .vision-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+        .vision-hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            background: rgba(99,102,241,0.1);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gradient-1);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .vision-hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .vision-hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-dim);
+            max-width: 550px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            animation: fadeInUp 1s 1.5s forwards;
+        }
+        .scroll-indicator span {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--gradient-1), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+            50% { opacity: 1; transform: scaleY(1); }
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* ── Sections ── */
+        .section {
+            padding: 8rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--gradient-1);
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+        }
+        .section-desc {
+            color: var(--text-dim);
+            font-size: 1rem;
+            max-width: 600px;
+            line-height: 1.7;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        /* ── Pillars ── */
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        .pillar-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 24px;
+            padding: 2.5rem;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        .pillar-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(99,102,241,0.2);
+            box-shadow: 0 20px 60px rgba(99,102,241,0.08);
+        }
+        .pillar-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        .pillar-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .pillar-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.5px;
+        }
+        .pillar-card p {
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* ── Values ── */
+        .values-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        .value-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.04);
+            background: rgba(255,255,255,0.01);
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .value-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: rgba(99,102,241,0.2);
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .value-item h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .value-item p {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* ── Timeline ── */
+        .vision-timeline {
+            position: relative;
+            margin-top: 4rem;
+            padding-left: 3rem;
+        }
+        .vision-timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--gradient-1), var(--gradient-3), transparent);
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -3rem;
+            top: 4px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            border: 3px solid var(--bg);
+            box-shadow: 0 0 15px rgba(99,102,241,0.4);
+        }
+        .timeline-year {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gradient-1);
+            margin-bottom: 0.3rem;
+        }
+        .timeline-item h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .timeline-item p {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* ── CTA ── */
+        .vision-cta {
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+        }
+        .vision-cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99,102,241,0.08), transparent 70%);
+            pointer-events: none;
+        }
+        .vision-cta h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+        }
+        .vision-cta p {
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        /* ── Footer ── */
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.04);
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        footer a { color: var(--gradient-1); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .pillars-grid { grid-template-columns: 1fr; }
+            .values-grid { grid-template-columns: 1fr; }
+            .navbar { padding: 1rem 1.5rem; }
+            .nav-links { gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="logo">
+            <div class="logo-dot"></div>
+            NexusAI
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="index.html#tarifs">Tarifs</a></li>
+            <li><a href="god-view.html">God View</a></li>
+            <li><a href="simulateur.html">Simulateur</a></li>
+            <li><a href="index.html#contact" class="btn-primary">Nous contacter</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero with 3D DNA Helix -->
+    <section class="vision-hero">
+        <canvas id="visionCanvas"></canvas>
+        <div class="vision-hero-content">
+            <div class="vision-hero-label">Notre Vision</div>
+            <h1 class="vision-hero-title">
+                Rendre l'IA<br>
+                <span class="gradient-text">accessible</span> à tous.
+            </h1>
+            <p class="vision-hero-subtitle">
+                Nous croyons qu'en 2030, chaque entreprise disposera de son propre écosystème d'agents IA. Notre mission : démocratiser cette révolution maintenant.
+            </p>
+        </div>
+        <div class="scroll-indicator">
+            <span>Découvrir</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- 3 Pillars -->
+    <section class="section">
+        <div class="reveal">
+            <div class="section-label">Nos Piliers</div>
+            <h2 class="section-title">Trois principes <span class="gradient-text">fondateurs</span>.</h2>
+            <p class="section-desc">Chaque décision que nous prenons est guidée par ces convictions.</p>
+        </div>
+
+        <div class="pillars-grid">
+            <div class="pillar-card">
+                <div class="pillar-icon" style="background:rgba(99,102,241,0.1);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                </div>
+                <h3>Innovation permanente</h3>
+                <p>Nous intégrons les dernières avancées en IA — des LLMs aux agents autonomes — pour que nos clients aient toujours un temps d'avance sur leur marché.</p>
+            </div>
+            <div class="pillar-card">
+                <div class="pillar-icon" style="background:rgba(168,85,247,0.1);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                </div>
+                <h3>Accessibilité totale</h3>
+                <p>L'IA ne doit pas être un privilège de grandes entreprises. Nos écosystèmes sont conçus pour être déployés et compris par des équipes de toute taille.</p>
+            </div>
+            <div class="pillar-card">
+                <div class="pillar-icon" style="background:rgba(34,197,94,0.1);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                </div>
+                <h3>Performance mesurable</h3>
+                <p>Pas de promesses vagues. Chaque déploiement est accompagné de KPIs précis, de rapports de productivité et d'une garantie de résultat à 30 jours.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values -->
+    <section class="section">
+        <div class="reveal">
+            <div class="section-label">Ce en quoi nous croyons</div>
+            <h2 class="section-title">L'IA au service de <span class="gradient-text">l'humain</span>.</h2>
+            <p class="section-desc">L'automatisation intelligente ne remplace pas les talents — elle les libère pour se concentrer sur ce qui compte vraiment.</p>
+        </div>
+
+        <div class="values-grid">
+            <div class="value-item">
+                <div class="value-num">01</div>
+                <div>
+                    <h4>Augmenter, pas remplacer</h4>
+                    <p>Nos agents IA prennent en charge les tâches répétitives pour que vos équipes se consacrent à la stratégie et à la créativité.</p>
+                </div>
+            </div>
+            <div class="value-item">
+                <div class="value-num">02</div>
+                <div>
+                    <h4>Transparence algorithmique</h4>
+                    <p>Chaque décision prise par vos agents est traçable, explicable et auditable. Pas de boîte noire.</p>
+                </div>
+            </div>
+            <div class="value-item">
+                <div class="value-num">03</div>
+                <div>
+                    <h4>Souveraineté des données</h4>
+                    <p>Vos données restent vos données. Infrastructure dédiée, chiffrement de bout en bout, conformité RGPD native.</p>
+                </div>
+            </div>
+            <div class="value-item">
+                <div class="value-num">04</div>
+                <div>
+                    <h4>Impact durable</h4>
+                    <p>Nous optimisons pour le long terme — architectures évolutives, code maintenable, formation des équipes incluse.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="section">
+        <div class="reveal">
+            <div class="section-label">Notre Trajectoire</div>
+            <h2 class="section-title">D'ici à <span class="gradient-text">2030</span>.</h2>
+            <p class="section-desc">Notre feuille de route pour démocratiser l'IA d'entreprise à grande échelle.</p>
+        </div>
+
+        <div class="vision-timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-year">2025 — Fondation</div>
+                <h4>Écosystèmes IA sur-mesure</h4>
+                <p>Déploiement de la première génération d'agents OpenClaw. 33 agents couvrant 6 domaines métier. Lancement de la God View.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-year">2026 — Expansion</div>
+                <h4>Marketplace d'agents</h4>
+                <p>Ouverture d'un catalogue communautaire d'agents spécialisés. Intégration native avec les principaux ERP et CRM du marché.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-year">2027 — Autonomie</div>
+                <h4>Agents auto-évolutifs</h4>
+                <p>Les agents apprennent et s'optimisent automatiquement en fonction des données métier. Fine-tuning continu sans intervention humaine.</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-year">2030 — Vision</div>
+                <h4>IA native pour chaque entreprise</h4>
+                <p>Chaque PME, startup et grand groupe dispose de son écosystème IA intégré. L'intelligence artificielle devient aussi naturelle que l'email.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="vision-cta">
+        <div class="reveal">
+            <h2>Construisons le futur <span class="gradient-text">ensemble</span>.</h2>
+            <p>Rejoignez les entreprises qui façonnent l'avenir de leur industrie avec l'IA.</p>
+            <a href="index.html#contact" class="btn-primary" style="font-size: 1rem; padding: 1rem 2.5rem;">Prendre rendez-vous</a>
+        </div>
+    </section>
+
+    <footer>
+        <span>&copy; 2026 NexusAI. Tous droits réservés.</span> &middot;
+        <a href="index.html">Retour à l'accueil</a>
+    </footer>
+
+    <script>
+        // ── Navbar scroll ──
+        window.addEventListener('scroll', function() {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ── GSAP Reveal ──
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.utils.toArray('.reveal').forEach(function(el) {
+            gsap.to(el, {
+                opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+                scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+            });
+        });
+
+        gsap.utils.toArray('.pillar-card').forEach(function(card, i) {
+            gsap.to(card, {
+                opacity: 1, y: 0, duration: 0.8, delay: i * 0.15, ease: 'power3.out',
+                scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: 'play none none none' }
+            });
+        });
+
+        gsap.utils.toArray('.value-item').forEach(function(item, i) {
+            gsap.to(item, {
+                opacity: 1, y: 0, duration: 0.8, delay: i * 0.1, ease: 'power3.out',
+                scrollTrigger: { trigger: item, start: 'top 88%', toggleActions: 'play none none none' }
+            });
+        });
+
+        gsap.utils.toArray('.timeline-item').forEach(function(item, i) {
+            gsap.to(item, {
+                opacity: 1, x: 0, duration: 0.8, delay: i * 0.15, ease: 'power3.out',
+                scrollTrigger: { trigger: item, start: 'top 85%', toggleActions: 'play none none none' }
+            });
+        });
+
+        // ── Hero text reveal ──
+        gsap.to('.vision-hero-label', { opacity: 1, y: 0, duration: 0.8, delay: 0.3, ease: 'power3.out' });
+        gsap.to('.vision-hero-title', { opacity: 1, y: 0, duration: 1, delay: 0.5, ease: 'power3.out' });
+        gsap.to('.vision-hero-subtitle', { opacity: 1, y: 0, duration: 0.8, delay: 0.8, ease: 'power3.out' });
+
+        // ── Three.js — DNA-like Particle Helix ──
+        (function() {
+            var canvas = document.getElementById('visionCanvas');
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 30);
+
+            var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setClearColor(0x000000, 0);
+
+            // Create glow texture
+            var cv = document.createElement('canvas');
+            cv.width = cv.height = 64;
+            var ctx = cv.getContext('2d');
+            var g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            g.addColorStop(0, 'rgba(99,102,241,0.9)');
+            g.addColorStop(0.3, 'rgba(139,92,246,0.4)');
+            g.addColorStop(1, 'rgba(168,85,247,0)');
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, 64, 64);
+            var glowTex = new THREE.CanvasTexture(cv);
+
+            // Double helix
+            var helixGroup = new THREE.Group();
+            var totalPoints = 120;
+            var radius = 8;
+            var height = 50;
+            var nodes = [];
+
+            for (var i = 0; i < totalPoints; i++) {
+                var t = i / totalPoints;
+                var angle = t * Math.PI * 6;
+                var y = (t - 0.5) * height;
+
+                // Strand A
+                var xA = Math.cos(angle) * radius;
+                var zA = Math.sin(angle) * radius;
+
+                var matA = new THREE.SpriteMaterial({
+                    map: glowTex, transparent: true, opacity: 0.6,
+                    blending: THREE.AdditiveBlending, color: 0x6366f1
+                });
+                var spriteA = new THREE.Sprite(matA);
+                spriteA.position.set(xA, y, zA);
+                var size = 0.5 + Math.random() * 0.5;
+                spriteA.scale.set(size, size, 1);
+                helixGroup.add(spriteA);
+
+                // Strand B (offset by PI)
+                var xB = Math.cos(angle + Math.PI) * radius;
+                var zB = Math.sin(angle + Math.PI) * radius;
+
+                var matB = new THREE.SpriteMaterial({
+                    map: glowTex, transparent: true, opacity: 0.5,
+                    blending: THREE.AdditiveBlending, color: 0xa855f7
+                });
+                var spriteB = new THREE.Sprite(matB);
+                spriteB.position.set(xB, y, zB);
+                spriteB.scale.set(size, size, 1);
+                helixGroup.add(spriteB);
+
+                nodes.push({ a: spriteA, b: spriteB, baseY: y, phase: t * Math.PI * 2 });
+
+                // Cross-connections every 6 points
+                if (i % 6 === 0) {
+                    var lineGeo = new THREE.BufferGeometry();
+                    var positions = new Float32Array([xA, y, zA, xB, y, zB]);
+                    lineGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    var lineMat = new THREE.LineBasicMaterial({
+                        color: 0x8b5cf6, transparent: true, opacity: 0.1,
+                        blending: THREE.AdditiveBlending
+                    });
+                    helixGroup.add(new THREE.Line(lineGeo, lineMat));
+                }
+            }
+
+            // Floating ambient particles
+            for (var p = 0; p < 80; p++) {
+                var pMat = new THREE.SpriteMaterial({
+                    map: glowTex, transparent: true, opacity: 0.15,
+                    blending: THREE.AdditiveBlending, color: 0x6366f1
+                });
+                var pSprite = new THREE.Sprite(pMat);
+                pSprite.position.set(
+                    (Math.random() - 0.5) * 40,
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 30
+                );
+                var pSize = 0.2 + Math.random() * 0.4;
+                pSprite.scale.set(pSize, pSize, 1);
+                helixGroup.add(pSprite);
+            }
+
+            scene.add(helixGroup);
+
+            var clock = new THREE.Clock();
+
+            function animate() {
+                requestAnimationFrame(animate);
+                var elapsed = clock.getElapsedTime();
+
+                helixGroup.rotation.y = elapsed * 0.08;
+
+                // Gentle breathing
+                nodes.forEach(function(n) {
+                    var breathe = Math.sin(elapsed * 0.3 + n.phase) * 0.3;
+                    n.a.position.y = n.baseY + breathe;
+                    n.b.position.y = n.baseY + breathe;
+                });
+
+                // Parallax with scroll
+                var scrollY = window.scrollY || 0;
+                helixGroup.position.y = scrollY * 0.02;
+                helixGroup.rotation.x = scrollY * 0.0003;
+
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', function() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        })();
+    </script>
+</body>
+</html>
