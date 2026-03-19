@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusAI — Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #030108;
+            --bg-card: rgba(255,255,255,0.03);
+            --text: #f0f0f5;
+            --text-secondary: #9ca3af;
+            --gradient-1: #6366f1;
+            --gradient-2: #8b5cf6;
+            --gradient-3: #a855f7;
+            --border: rgba(255,255,255,0.08);
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ── Loader ── */
+        .dash-loader {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s;
+        }
+        .dash-loader.hidden { opacity: 0; pointer-events: none; }
+        .dash-loader-spinner {
+            width: 40px; height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--gradient-1);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Navbar ── */
+        .dash-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(3,1,8,0.85);
+        }
+        .dash-nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .dash-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .dash-logo-dot {
+            width: 8px; height: 8px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+        }
+        .dash-back {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .dash-back:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .dash-nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .dash-user-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--gradient-1);
+            object-fit: cover;
+        }
+        .dash-user-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .dash-logout {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: none;
+            border: 1px solid var(--border);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .dash-logout:hover { border-color: #ef4444; color: #ef4444; }
+
+        /* ── Main Layout ── */
+        .dash-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ── Welcome Header ── */
+        .dash-welcome {
+            margin-bottom: 2.5rem;
+        }
+        .dash-welcome h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .dash-welcome h1 span {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dash-welcome p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* ── Stats Row ── */
+        .dash-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .dash-stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .dash-stat-card:hover {
+            border-color: rgba(99,102,241,0.3);
+            transform: translateY(-2px);
+        }
+        .dash-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        .dash-stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .dash-stat-value.gradient {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dash-stat-change {
+            font-size: 0.75rem;
+            color: #22c55e;
+            margin-top: 0.3rem;
+        }
+
+        /* ── Main Grid ── */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .dash-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── Cards ── */
+        .dash-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .dash-card:hover { border-color: rgba(99,102,241,0.2); }
+        .dash-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+        }
+        .dash-card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .dash-card-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 100px;
+            background: rgba(99,102,241,0.1);
+            color: var(--gradient-1);
+            font-weight: 600;
+        }
+
+        /* ── Projects List ── */
+        .dash-project {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            transition: background 0.2s;
+            margin-bottom: 0.5rem;
+        }
+        .dash-project:hover { background: rgba(255,255,255,0.03); }
+        .dash-project-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .dash-project-icon svg {
+            width: 20px; height: 20px;
+            stroke-width: 2;
+            fill: none;
+        }
+        .dash-project-info { flex: 1; }
+        .dash-project-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+        .dash-project-desc {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+        .dash-project-status {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+            font-weight: 600;
+        }
+        .status-active { background: rgba(34,197,94,0.1); color: #22c55e; }
+        .status-pending { background: rgba(245,158,11,0.1); color: #f59e0b; }
+        .status-setup { background: rgba(99,102,241,0.1); color: #818cf8; }
+
+        /* ── Empty state ── */
+        .dash-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+        .dash-empty svg {
+            width: 48px; height: 48px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 1.5;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        .dash-empty p { font-size: 0.9rem; margin-bottom: 1rem; }
+        .dash-empty a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            color: #fff;
+            padding: 0.6rem 1.4rem;
+            border-radius: 100px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .dash-empty a:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(99,102,241,0.4); }
+
+        /* ── Quick Actions ── */
+        .dash-action {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.9rem 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text);
+            transition: background 0.2s;
+            margin-bottom: 0.4rem;
+        }
+        .dash-action:hover { background: rgba(255,255,255,0.04); }
+        .dash-action-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .dash-action-icon svg {
+            width: 18px; height: 18px;
+            stroke-width: 2;
+            fill: none;
+        }
+        .dash-action span {
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+        .dash-action .arrow-right {
+            margin-left: auto;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* ── Plan Card ── */
+        .dash-plan {
+            background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(168,85,247,0.08));
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .dash-plan-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gradient-1);
+            margin-bottom: 0.3rem;
+        }
+        .dash-plan-status {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        .dash-plan a {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--gradient-1);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: gap 0.3s;
+        }
+        .dash-plan a:hover { gap: 0.8rem; }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="dash-loader" id="dashLoader">
+        <div class="dash-loader-spinner"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="dash-nav">
+        <div class="dash-nav-left">
+            <a href="index.html" class="dash-logo">
+                <div class="dash-logo-dot"></div>
+                NexusAI
+            </a>
+            <a href="index.html" class="dash-back">← Retour au site</a>
+        </div>
+        <div class="dash-nav-right">
+            <img class="dash-user-avatar" id="dashAvatar" src="" alt="avatar">
+            <span class="dash-user-name" id="dashUserName"></span>
+            <button class="dash-logout" onclick="firebase.auth().signOut()">Déconnexion</button>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="dash-container" id="dashContent" style="display:none;">
+        <!-- Welcome -->
+        <div class="dash-welcome">
+            <h1>Bienvenue, <span id="dashFirstName"></span> 👋</h1>
+            <p>Gérez vos projets IA et suivez vos performances.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="dash-stats">
+            <div class="dash-stat-card">
+                <div class="dash-stat-label">Projets actifs</div>
+                <div class="dash-stat-value gradient">0</div>
+                <div class="dash-stat-change">Aucun projet pour l'instant</div>
+            </div>
+            <div class="dash-stat-card">
+                <div class="dash-stat-label">Agents déployés</div>
+                <div class="dash-stat-value gradient">0</div>
+                <div class="dash-stat-change">—</div>
+            </div>
+            <div class="dash-stat-card">
+                <div class="dash-stat-label">Heures économisées</div>
+                <div class="dash-stat-value gradient">0h</div>
+                <div class="dash-stat-change">—</div>
+            </div>
+            <div class="dash-stat-card">
+                <div class="dash-stat-label">Plan actuel</div>
+                <div class="dash-stat-value" style="font-size:1.3rem;">Aucun plan</div>
+                <div class="dash-stat-change" style="color:var(--gradient-1);">Choisir un plan →</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="dash-grid">
+            <!-- Left: Projects -->
+            <div class="dash-card">
+                <div class="dash-card-header">
+                    <div class="dash-card-title">Mes Projets</div>
+                    <div class="dash-card-badge">0 projets</div>
+                </div>
+
+                <div class="dash-empty">
+                    <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+                    <p>Vous n'avez pas encore de projet.<br>Réservez un appel pour démarrer votre premier écosystème IA.</p>
+                    <a href="index.html#contact">Démarrer un projet →</a>
+                </div>
+            </div>
+
+            <!-- Right: Quick Actions + Plan -->
+            <div>
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div class="dash-card-title">Actions rapides</div>
+                    </div>
+
+                    <a href="index.html#contact" class="dash-action">
+                        <div class="dash-action-icon" style="background:rgba(99,102,241,0.1);">
+                            <svg viewBox="0 0 24 24" stroke="#6366f1"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                        </div>
+                        <span>Nous contacter</span>
+                        <span class="arrow-right">→</span>
+                    </a>
+                    <a href="index.html#tarifs" class="dash-action">
+                        <div class="dash-action-icon" style="background:rgba(168,85,247,0.1);">
+                            <svg viewBox="0 0 24 24" stroke="#a855f7"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        </div>
+                        <span>Voir les plans</span>
+                        <span class="arrow-right">→</span>
+                    </a>
+                    <a href="simulateur.html" class="dash-action">
+                        <div class="dash-action-icon" style="background:rgba(34,211,238,0.1);">
+                            <svg viewBox="0 0 24 24" stroke="#22d3ee"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg>
+                        </div>
+                        <span>Simulateur IA</span>
+                        <span class="arrow-right">→</span>
+                    </a>
+                    <a href="god-view.html" class="dash-action">
+                        <div class="dash-action-icon" style="background:rgba(14,165,233,0.1);">
+                            <svg viewBox="0 0 24 24" stroke="#0ea5e9"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </div>
+                        <span>God View — 33 agents</span>
+                        <span class="arrow-right">→</span>
+                    </a>
+                </div>
+
+                <!-- Plan -->
+                <div class="dash-plan">
+                    <div class="dash-plan-name">Plan actuel</div>
+                    <div class="dash-plan-status">Aucun plan actif</div>
+                    <a href="index.html#tarifs">Découvrir les offres →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Firebase
+        firebase.initializeApp({
+            apiKey: "AIzaSyA7-P6s0Nk4WvmUywOl5fNhJgFMMCM2RP0",
+            authDomain: "nexus-f3dd4.firebaseapp.com",
+            projectId: "nexus-f3dd4",
+            storageBucket: "nexus-f3dd4.firebasestorage.app",
+            messagingSenderId: "844427129512",
+            appId: "1:844427129512:web:209c5901c192606958089d"
+        });
+
+        var auth = firebase.auth();
+
+        auth.onAuthStateChanged(function(user) {
+            var loader = document.getElementById('dashLoader');
+            if (!user) {
+                // Not logged in — redirect to home
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Show dashboard
+            document.getElementById('dashContent').style.display = 'block';
+            loader.classList.add('hidden');
+
+            // Populate user info
+            var photoURL = user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.displayName || 'U') + '&background=6366f1&color=fff&size=64';
+            document.getElementById('dashAvatar').src = photoURL;
+            document.getElementById('dashUserName').textContent = user.displayName || user.email;
+            document.getElementById('dashFirstName').textContent = (user.displayName || 'Utilisateur').split(' ')[0];
+        });
+    </script>
+</body>
+</html>
