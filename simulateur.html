@@ -3,791 +3,944 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusAI — Simulateur Employés → Agents IA</title>
+    <title>NexusAI — Simulateur ROI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
         :root {
-            --bg: #fafbfc;
-            --white: #ffffff;
-            --text: #0f172a;
-            --text-secondary: #64748b;
-            --border: #e2e8f0;
+            --bg: #050508;
+            --surface: #0d0d18;
+            --surface2: #131320;
+            --text: #f0f0f5;
+            --text2: #8888a8;
+            --text3: #44445a;
             --accent: #6366f1;
-            --accent-light: #eef2ff;
+            --accent2: #a855f7;
             --green: #22c55e;
-            --green-light: #f0fdf4;
             --red: #ef4444;
-            --red-light: #fef2f2;
-            --orange: #f59e0b;
+            --border: rgba(255,255,255,0.07);
+            --border2: rgba(255,255,255,0.12);
         }
-
         html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
 
         /* ── Header ── */
-        .sim-header {
-            background: var(--white);
+        .hdr {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(5,5,8,0.85);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 50;
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .sim-header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .sim-logo {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: var(--text);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .sim-logo .dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: var(--accent);
-        }
-        .sim-badge {
-            font-size: 0.6rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--accent);
-            background: var(--accent-light);
-            padding: 0.2rem 0.6rem;
-            border-radius: 6px;
-        }
-        .sim-back {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .sim-back:hover { color: var(--accent); }
+        .hdr-logo { font-family:'Space Grotesk',sans-serif; font-weight:800; font-size:1.1rem; color:var(--text); text-decoration:none; display:flex; align-items:center; gap:0.5rem; }
+        .hdr-logo-dot { width:8px; height:8px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); }
+        .hdr-badge { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--accent); background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); padding:0.2rem 0.6rem; border-radius:6px; }
+        .hdr-back { font-size:0.8rem; color:var(--text2); text-decoration:none; transition:color 0.2s; display:flex; align-items:center; gap:0.4rem; }
+        .hdr-back:hover { color:var(--text); }
 
-        /* ── Main layout ── */
-        .sim-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
+        /* ── Progress bar ── */
+        .progress-wrap { position:fixed; top:61px; left:0; right:0; z-index:99; height:3px; background:var(--border); }
+        .progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width 0.5s cubic-bezier(0.16,1,0.3,1); }
 
-        .sim-hero {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        .sim-hero h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 0.5rem;
-        }
-        .sim-hero h1 .grad {
-            background: linear-gradient(135deg, var(--accent), #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .sim-hero p {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
+        /* ── Main ── */
+        .main { padding: 100px 2rem 4rem; max-width: 1100px; margin: 0 auto; }
 
-        /* ── Config Panel ── */
-        .sim-grid {
-            display: grid;
-            grid-template-columns: 400px 1fr;
-            gap: 2rem;
-            align-items: start;
-        }
+        /* ── Step indicators ── */
+        .steps-nav { display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:3rem; }
+        .step-item { display:flex; align-items:center; gap:0.6rem; font-size:0.75rem; font-weight:600; color:var(--text3); transition:color 0.3s; }
+        .step-item.active { color:var(--text); }
+        .step-item.done { color:var(--green); }
+        .step-num { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--text3); display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; transition:all 0.3s; }
+        .step-item.active .step-num { border-color:var(--accent); color:var(--accent); background:rgba(99,102,241,0.1); }
+        .step-item.done .step-num { border-color:var(--green); background:var(--green); color:white; }
+        .step-connector { width:60px; height:1px; background:var(--text3); margin:0 0.5rem; transition:background 0.3s; }
+        .step-connector.done { background:var(--green); }
 
-        .sim-config {
-            background: var(--white);
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            padding: 2rem;
-            position: sticky;
-            top: 80px;
-        }
+        /* ── Panels ── */
+        .panel { display:none; animation:fadeUp 0.4s cubic-bezier(0.16,1,0.3,1); }
+        .panel.active { display:block; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
 
-        .sim-config h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        .panel-title { text-align:center; margin-bottom:2.5rem; }
+        .panel-title .step-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--accent); margin-bottom:0.8rem; display:block; }
+        .panel-title h2 { font-family:'Space Grotesk',sans-serif; font-size:2rem; font-weight:800; letter-spacing:-1px; margin-bottom:0.5rem; }
+        .panel-title p { font-size:0.9rem; color:var(--text2); max-width:480px; margin:0 auto; }
 
-        .sim-field {
-            margin-bottom: 1.5rem;
+        /* ── STEP 1: Sector grid ── */
+        .sector-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; }
+        @media(max-width:700px){ .sector-grid{grid-template-columns:repeat(2,1fr);} }
+        .sector-card {
+            background:var(--surface); border:1.5px solid var(--border);
+            border-radius:16px; padding:1.5rem 1rem;
+            text-align:center; cursor:pointer;
+            transition:all 0.2s cubic-bezier(0.16,1,0.3,1);
+            user-select:none;
         }
-        .sim-field label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-        }
-        .sim-field label span {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 800;
-            color: var(--accent);
-        }
-        .sim-slider {
-            width: 100%;
-            -webkit-appearance: none;
-            appearance: none;
-            height: 6px;
-            border-radius: 100px;
-            background: var(--border);
-            outline: none;
-            transition: background 0.2s;
-        }
-        .sim-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px; height: 20px;
-            border-radius: 50%;
-            background: var(--accent);
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(99,102,241,0.3);
-            transition: transform 0.15s;
-        }
-        .sim-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        .sector-card:hover { border-color:rgba(99,102,241,0.3); background:rgba(99,102,241,0.04); transform:translateY(-2px); }
+        .sector-card.selected { border-color:var(--accent); background:rgba(99,102,241,0.08); box-shadow:0 0 0 3px rgba(99,102,241,0.1); }
+        .sector-card .s-icon { font-size:2rem; margin-bottom:0.6rem; display:block; }
+        .sector-card .s-name { font-size:0.82rem; font-weight:700; color:var(--text); }
+        .sector-card .s-hint { font-size:0.65rem; color:var(--text2); margin-top:0.2rem; }
 
-        .sim-field select {
-            width: 100%;
-            padding: 0.6rem 0.8rem;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            font-family: inherit;
-            font-size: 0.85rem;
-            background: var(--bg);
-            color: var(--text);
-            cursor: pointer;
-            outline: none;
-            transition: border-color 0.2s;
+        /* Employee dial */
+        .emp-dial { display:flex; align-items:center; justify-content:center; gap:1.5rem; margin:2rem 0; }
+        .dial-btn {
+            width:48px; height:48px; border-radius:50%;
+            border:1.5px solid var(--border2); background:var(--surface);
+            color:var(--text); font-size:1.4rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            transition:all 0.15s; font-weight:300;
         }
-        .sim-field select:focus { border-color: var(--accent); }
+        .dial-btn:hover { border-color:var(--accent); color:var(--accent); }
+        .dial-val { font-family:'Space Grotesk',sans-serif; font-size:3.5rem; font-weight:800; letter-spacing:-2px; min-width:100px; text-align:center; line-height:1; }
+        .dial-lbl { font-size:0.75rem; color:var(--text2); text-align:center; margin-top:0.3rem; }
 
-        /* Postes grid */
-        .poste-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            margin-top: 1rem;
+        /* ── STEP 2: Tasks ── */
+        .tasks-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:0.8rem; margin-bottom:2rem; }
+        .task-card {
+            background:var(--surface); border:1.5px solid var(--border);
+            border-radius:14px; padding:1.2rem;
+            cursor:pointer; transition:all 0.2s;
+            position:relative; user-select:none;
         }
-        .poste-item {
-            padding: 0.5rem 0.6rem;
-            border-radius: 10px;
-            border: 1.5px solid var(--border);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            user-select: none;
+        .task-card:hover { border-color:rgba(99,102,241,0.25); background:rgba(99,102,241,0.03); }
+        .task-card.selected { border-color:var(--accent); background:rgba(99,102,241,0.07); }
+        .task-card .t-icon { font-size:1.4rem; margin-bottom:0.5rem; display:block; }
+        .task-card .t-name { font-size:0.85rem; font-weight:700; margin-bottom:0.2rem; }
+        .task-card .t-time { font-size:0.7rem; color:var(--text2); }
+        .task-card .t-auto { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+        .task-card .t-check {
+            position:absolute; top:0.7rem; right:0.7rem;
+            width:18px; height:18px; border-radius:50%;
+            border:1.5px solid var(--border2);
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.6rem; transition:all 0.2s;
         }
-        .poste-item:hover { border-color: rgba(99,102,241,0.3); }
-        .poste-item.selected {
-            border-color: var(--accent);
-            background: var(--accent-light);
-        }
-        .poste-item .poste-icon { font-size: 1.2rem; margin-bottom: 0.15rem; }
-        .poste-item .poste-name { font-size: 0.65rem; font-weight: 600; }
-        .poste-item .poste-salary { font-size: 0.6rem; color: var(--text-secondary); }
+        .task-card.selected .t-check { background:var(--accent); border-color:var(--accent); color:white; }
 
-        /* ── Results panel ── */
-        .sim-results {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+        .tally-bar {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:14px; padding:1rem 1.5rem;
+            display:flex; align-items:center; justify-content:space-between;
+            flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;
         }
+        .tally-item { text-align:center; }
+        .tally-val { font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:800; letter-spacing:-1px; }
+        .tally-lbl { font-size:0.65rem; color:var(--text2); margin-top:0.1rem; }
+        .tally-val.green { color:var(--green); }
+        .tally-val.accent { background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
-        .result-card {
-            background: var(--white);
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            padding: 2rem;
+        /* ── STEP 3: Simulation ── */
+        .sim-loading {
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            min-height:400px; gap:1.5rem; text-align:center;
         }
+        .sim-spinner {
+            width:64px; height:64px; border-radius:50%;
+            border:3px solid var(--border2);
+            border-top-color:var(--accent);
+            animation:spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .sim-loading-text { font-size:1.1rem; font-weight:600; color:var(--text2); }
+        .sim-agent-feed { font-size:0.78rem; color:var(--accent); height:20px; overflow:hidden; }
 
-        .result-card h3 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        /* Results */
+        .results-wrap { display:none; }
+        .results-wrap.visible { display:block; animation:fadeUp 0.5s ease; }
 
-        /* Big number */
-        .big-savings {
-            text-align: center;
-            padding: 2rem;
-            background: linear-gradient(135deg, rgba(34,197,94,0.06), rgba(34,197,94,0.02));
-            border: 1px solid rgba(34,197,94,0.15);
-            border-radius: 16px;
-            margin-bottom: 1.5rem;
+        /* Hero number */
+        .res-hero {
+            text-align:center; padding:3rem 2rem;
+            background:linear-gradient(145deg,var(--surface),var(--surface2));
+            border:1px solid var(--border); border-radius:24px;
+            margin-bottom:1.5rem; position:relative; overflow:hidden;
         }
-        .big-savings .amount {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--green);
-            letter-spacing: -2px;
+        .res-hero::before {
+            content:''; position:absolute; top:-40%; left:50%; transform:translateX(-50%);
+            width:400px; height:400px; border-radius:50%;
+            background:radial-gradient(circle,rgba(99,102,241,0.12),transparent 70%);
+            pointer-events:none;
         }
-        .big-savings .sub {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 0.3rem;
-        }
+        .res-hero-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--accent); margin-bottom:0.8rem; }
+        .res-hero-amount { font-family:'Space Grotesk',sans-serif; font-size:4.5rem; font-weight:800; letter-spacing:-3px; line-height:1; color:var(--green); }
+        .res-hero-sub { font-size:0.9rem; color:var(--text2); margin-top:0.5rem; }
+        .res-hero-badges { display:flex; justify-content:center; flex-wrap:wrap; gap:0.6rem; margin-top:1.5rem; }
+        .res-badge { padding:0.35rem 0.9rem; border-radius:100px; font-size:0.72rem; font-weight:600; display:inline-flex; align-items:center; gap:0.4rem; }
+        .res-badge.green { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); color:var(--green); }
+        .res-badge.purple { background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.2); color:#a78bfa; }
+        .res-badge.orange { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.2); color:#fbbf24; }
 
-        /* Comparison bars */
-        .compare-row {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
+        /* Stats grid */
+        .res-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+        @media(max-width:600px){ .res-stats{grid-template-columns:1fr 1fr;} }
+        .res-stat {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:16px; padding:1.4rem 1.2rem; text-align:center;
         }
-        .compare-label {
-            width: 100px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-        .compare-bar-wrap {
-            flex: 1;
-            height: 32px;
-            background: var(--bg);
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-        .compare-bar {
-            height: 100%;
-            border-radius: 8px;
-            transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
-            display: flex;
-            align-items: center;
-            padding-left: 0.6rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: white;
-        }
-        .compare-bar.employee { background: linear-gradient(135deg, var(--red), #f97316); }
-        .compare-bar.ai { background: linear-gradient(135deg, var(--green), #10b981); }
-        .compare-value {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 800;
-            width: 90px;
-            text-align: right;
-            flex-shrink: 0;
-        }
+        .res-stat-val { font-family:'Space Grotesk',sans-serif; font-size:1.8rem; font-weight:800; letter-spacing:-1px; line-height:1; margin-bottom:0.3rem; }
+        .res-stat-lbl { font-size:0.7rem; color:var(--text2); line-height:1.3; }
 
-        /* Detail breakdown table */
-        .breakdown-table {
-            width: 100%;
-            border-collapse: collapse;
+        /* Workday timeline — game changer */
+        .timeline-section {
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:20px; padding:1.8rem; margin-bottom:1.5rem;
         }
-        .breakdown-table th {
-            text-align: left;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-            padding: 0.6rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .breakdown-table td {
-            padding: 0.7rem 0;
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-            font-size: 0.85rem;
-        }
-        .breakdown-table td:last-child {
-            text-align: right;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 700;
-        }
-        .breakdown-table .cost-emp { color: var(--red); }
-        .breakdown-table .cost-ai { color: var(--green); }
-        .breakdown-table .saving { color: var(--accent); font-weight: 700; }
+        .timeline-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.5rem; }
+        .timeline-title { font-family:'Space Grotesk',sans-serif; font-size:0.9rem; font-weight:700; }
+        .timeline-legend { display:flex; gap:1rem; font-size:0.65rem; color:var(--text2); }
+        .timeline-legend span { display:flex; align-items:center; gap:0.3rem; }
+        .tl-dot { width:8px; height:8px; border-radius:2px; }
 
-        /* Recommended plan */
-        .recommended-plan {
-            background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.04));
-            border: 1px solid rgba(99,102,241,0.15);
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
+        .timeline-row { display:flex; gap:0.5rem; align-items:center; margin-bottom:0.7rem; }
+        .timeline-row-lbl { font-size:0.7rem; font-weight:600; color:var(--text2); width:80px; flex-shrink:0; }
+        .timeline-bars { display:flex; gap:3px; flex:1; }
+        .tl-block {
+            height:32px; border-radius:6px; flex:1;
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.55rem; font-weight:600; overflow:hidden;
+            white-space:nowrap; padding:0 4px;
+            transition:all 0.3s;
         }
-        .recommended-plan .plan-name {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent);
-            font-weight: 700;
-            margin-bottom: 0.3rem;
-        }
-        .recommended-plan .plan-price {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 0.3rem;
-        }
-        .recommended-plan .plan-roi {
-            font-size: 0.8rem;
-            color: var(--green);
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        .recommended-plan .plan-btn {
-            display: inline-block;
-            padding: 0.7rem 2rem;
-            background: var(--text);
-            color: white;
-            border-radius: 100px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 0.85rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .recommended-plan .plan-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
+        .tl-block.manual { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.2); color:rgba(239,68,68,0.7); }
+        .tl-block.ai { background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.2); color:rgba(34,197,94,0.8); }
+        .tl-block.free { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); color:var(--text3); }
+        .tl-hours { display:flex; gap:3px; flex:1; padding-left:85px; }
+        .tl-hour { flex:1; text-align:center; font-size:0.55rem; color:var(--text3); }
 
-        /* Productivity chart */
-        .prod-chart {
-            display: flex;
-            gap: 0.3rem;
-            align-items: flex-end;
-            height: 120px;
-            padding-top: 1rem;
-        }
-        .prod-bar-group {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .prod-bars {
-            display: flex;
-            gap: 3px;
-            align-items: flex-end;
-            width: 100%;
-            justify-content: center;
-        }
-        .prod-bar {
-            width: 16px;
-            border-radius: 4px 4px 0 0;
-            transition: height 0.6s cubic-bezier(0.16,1,0.3,1);
-        }
-        .prod-bar.emp { background: rgba(239,68,68,0.25); }
-        .prod-bar.ai { background: var(--green); }
-        .prod-month {
-            font-size: 0.55rem;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
+        /* Payback gauge */
+        .gauge-section { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:1.8rem; margin-bottom:1.5rem; text-align:center; }
+        .gauge-title { font-family:'Space Grotesk',sans-serif; font-size:0.9rem; font-weight:700; margin-bottom:1.5rem; }
+        .gauge-wrap { position:relative; width:180px; height:100px; margin:0 auto 1rem; }
+        .gauge-svg { width:100%; }
+        .gauge-text { position:absolute; bottom:0; left:0; right:0; text-align:center; }
+        .gauge-text .g-val { font-family:'Space Grotesk',sans-serif; font-size:1.6rem; font-weight:800; letter-spacing:-1px; }
+        .gauge-text .g-lbl { font-size:0.65rem; color:var(--text2); }
+        .gauge-desc { font-size:0.78rem; color:var(--text2); max-width:300px; margin:0 auto; }
 
-        /* Guarantee banner */
-        .guarantee-strip {
-            background: var(--green-light);
-            border: 1px solid rgba(34,197,94,0.2);
-            border-radius: 12px;
-            padding: 1rem 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            font-size: 0.8rem;
-            color: #166534;
-            font-weight: 600;
+        /* Agent recommendation */
+        .rec-section {
+            background:linear-gradient(135deg,rgba(99,102,241,0.06),rgba(168,85,247,0.04));
+            border:1px solid rgba(99,102,241,0.15); border-radius:20px; padding:2rem;
+            margin-bottom:1.5rem; position:relative; overflow:hidden;
         }
-        .guarantee-strip .g-icon { font-size: 1.5rem; }
+        .rec-section::before { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(168,85,247,0.08),transparent 70%); }
+        .rec-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.5rem; }
+        .rec-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:2px; color:var(--accent); }
+        .rec-team-name { font-family:'Space Grotesk',sans-serif; font-size:1.3rem; font-weight:800; }
+        .rec-agents { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.5rem; }
+        .rec-agent { display:inline-flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:0.5rem 0.8rem; }
+        .rec-agent-avatar { width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; color:white; flex-shrink:0; }
+        .rec-agent-info .rec-agent-name { font-size:0.72rem; font-weight:700; }
+        .rec-agent-info .rec-agent-role { font-size:0.62rem; color:var(--text2); }
+        .rec-cta { display:flex; gap:0.8rem; flex-wrap:wrap; }
+        .btn-primary { display:inline-flex; align-items:center; gap:0.5rem; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; border:none; border-radius:12px; padding:0.85rem 1.8rem; font-size:0.9rem; font-weight:700; cursor:pointer; text-decoration:none; transition:all 0.2s; }
+        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(99,102,241,0.3); }
+        .btn-secondary { display:inline-flex; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.04); color:var(--text); border:1px solid var(--border2); border-radius:12px; padding:0.85rem 1.8rem; font-size:0.9rem; font-weight:600; cursor:pointer; text-decoration:none; transition:all 0.2s; }
+        .btn-secondary:hover { background:rgba(255,255,255,0.07); border-color:var(--border2); }
 
-        @media (max-width: 768px) {
-            .sim-grid { grid-template-columns: 1fr; }
-            .sim-config { position: static; }
-            .poste-grid { grid-template-columns: repeat(3, 1fr); }
-            .sim-hero h1 { font-size: 1.5rem; }
-            .big-savings .amount { font-size: 2rem; }
+        /* Nav buttons */
+        .nav-row { display:flex; justify-content:space-between; align-items:center; margin-top:2.5rem; gap:1rem; flex-wrap:wrap; }
+        .nav-row.centered { justify-content:center; }
+        .btn-next { display:inline-flex; align-items:center; gap:0.5rem; background:var(--text); color:var(--bg); border:none; border-radius:12px; padding:0.9rem 2.2rem; font-size:0.9rem; font-weight:800; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+        .btn-next:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,0.3); }
+        .btn-next:disabled { opacity:0.3; cursor:not-allowed; transform:none; }
+        .btn-prev { display:inline-flex; align-items:center; gap:0.4rem; background:transparent; color:var(--text2); border:none; font-size:0.85rem; font-weight:600; cursor:pointer; font-family:inherit; transition:color 0.2s; padding:0.5rem; }
+        .btn-prev:hover { color:var(--text); }
+
+        /* ── Live agent feed ── */
+        .live-feed {
+            background:var(--surface); border:1px solid var(--border); border-radius:16px;
+            padding:1rem 1.2rem; margin-bottom:1.5rem; height:130px; overflow:hidden; position:relative;
         }
+        .live-feed-title { font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--text3); margin-bottom:0.6rem; display:flex; align-items:center; gap:0.4rem; }
+        .live-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 6px rgba(34,197,94,0.5); animation:pulse-g 1.5s infinite; }
+        @keyframes pulse-g { 0%,100%{opacity:1}50%{opacity:0.4} }
+        .live-entries { display:flex; flex-direction:column; gap:0.35rem; }
+        .live-entry { font-size:0.72rem; display:flex; align-items:center; gap:0.5rem; animation:slideIn 0.3s ease; }
+        @keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+        .live-entry .le-agent { color:var(--accent); font-weight:700; min-width:70px; }
+        .live-entry .le-task { color:var(--text2); }
+        .live-entry .le-stat { color:var(--green); font-weight:600; margin-left:auto; }
+
+        /* Reset button */
+        .btn-reset { background:none; border:1px solid var(--border); color:var(--text2); border-radius:10px; padding:0.5rem 1rem; font-size:0.78rem; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+        .btn-reset:hover { border-color:var(--border2); color:var(--text); }
     </style>
 </head>
 <body>
 
-<header class="sim-header">
-    <div class="sim-header-left">
-        <a href="index.html" class="sim-logo"><span class="dot"></span> NexusAI</a>
-        <span class="sim-badge">Simulateur</span>
+<header class="hdr">
+    <div style="display:flex;align-items:center;gap:0.8rem;">
+        <a href="index.html" class="hdr-logo"><span class="hdr-logo-dot"></span> NexusAI</a>
+        <span class="hdr-badge">Simulateur ROI</span>
     </div>
-    <a href="index.html" class="sim-back">← Retour au site</a>
+    <a href="index.html" class="hdr-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        Retour
+    </a>
 </header>
 
-<div class="sim-container">
-    <div class="sim-hero">
-        <h1>Employés → <span class="grad">Agents IA</span></h1>
-        <p>Simulez les économies réelles en remplaçant des tâches répétitives par des agents IA autonomes. Résultats basés sur les données marché 2025.</p>
+<div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:33%"></div></div>
+
+<main class="main">
+
+    <!-- Step Nav -->
+    <div class="steps-nav">
+        <div class="step-item active" id="stepNav1">
+            <div class="step-num">1</div>
+            <span>Profil</span>
+        </div>
+        <div class="step-connector" id="conn1"></div>
+        <div class="step-item" id="stepNav2">
+            <div class="step-num">2</div>
+            <span>Tâches</span>
+        </div>
+        <div class="step-connector" id="conn2"></div>
+        <div class="step-item" id="stepNav3">
+            <div class="step-num">3</div>
+            <span>Simulation</span>
+        </div>
     </div>
 
-    <div class="sim-grid">
-        <!-- LEFT: Configuration -->
-        <div class="sim-config">
-            <h3>⚙️ Configuration</h3>
+    <!-- ─────────────────────────────── STEP 1 ─────────────────────────────── -->
+    <div class="panel active" id="panel1">
+        <div class="panel-title">
+            <span class="step-label">Étape 1 sur 3</span>
+            <h2>Quel est votre secteur ?</h2>
+            <p>Choisissez votre domaine — nous pré-sélectionnerons les agents les plus pertinents.</p>
+        </div>
 
-            <div class="sim-field">
-                <label>Nombre d'employés concernés <span id="valEmp">10</span></label>
-                <input type="range" class="sim-slider" id="slEmp" min="1" max="100" value="10">
+        <div class="sector-grid">
+            <div class="sector-card selected" data-sector="juridique">
+                <span class="s-icon">⚖️</span>
+                <div class="s-name">Droit & Juridique</div>
+                <div class="s-hint">Cabinets, compliance</div>
             </div>
-
-            <div class="sim-field">
-                <label>Heures/semaine sur tâches automatisables <span id="valHrs">20</span>h</label>
-                <input type="range" class="sim-slider" id="slHrs" min="5" max="40" value="20">
+            <div class="sector-card" data-sector="sante">
+                <span class="s-icon">🏥</span>
+                <div class="s-name">Santé & Médical</div>
+                <div class="s-hint">Cliniques, cabinets</div>
             </div>
-
-            <div class="sim-field">
-                <label>Secteur d'activité</label>
-                <select id="selSector">
-                    <option value="tech">Tech & SaaS</option>
-                    <option value="finance">Finance & Assurance</option>
-                    <option value="sante">Santé & Médical</option>
-                    <option value="ecommerce">E-Commerce & Retail</option>
-                    <option value="immobilier">Immobilier</option>
-                    <option value="juridique">Juridique</option>
-                    <option value="education">Éducation</option>
-                    <option value="autre">Autre</option>
-                </select>
+            <div class="sector-card" data-sector="hotel">
+                <span class="s-icon">🏨</span>
+                <div class="s-name">Hôtellerie</div>
+                <div class="s-hint">Hôtels, conciergerie</div>
             </div>
-
-            <div class="sim-field">
-                <label>Postes concernés (sélectionnez)</label>
-                <div class="poste-grid" id="posteGrid">
-                    <div class="poste-item selected" data-poste="support" data-salary="2800">
-                        <div class="poste-icon">🎧</div>
-                        <div class="poste-name">Support client</div>
-                        <div class="poste-salary">~2 800€/mois</div>
-                    </div>
-                    <div class="poste-item" data-poste="admin" data-salary="2500">
-                        <div class="poste-icon">📋</div>
-                        <div class="poste-name">Administratif</div>
-                        <div class="poste-salary">~2 500€/mois</div>
-                    </div>
-                    <div class="poste-item" data-poste="data" data-salary="3800">
-                        <div class="poste-icon">📊</div>
-                        <div class="poste-name">Data / Analyse</div>
-                        <div class="poste-salary">~3 800€/mois</div>
-                    </div>
-                    <div class="poste-item" data-poste="marketing" data-salary="3200">
-                        <div class="poste-icon">📣</div>
-                        <div class="poste-name">Marketing</div>
-                        <div class="poste-salary">~3 200€/mois</div>
-                    </div>
-                    <div class="poste-item" data-poste="dev" data-salary="4200">
-                        <div class="poste-icon">💻</div>
-                        <div class="poste-name">Développement</div>
-                        <div class="poste-salary">~4 200€/mois</div>
-                    </div>
-                    <div class="poste-item" data-poste="rh" data-salary="3000">
-                        <div class="poste-icon">👥</div>
-                        <div class="poste-name">RH / Recrutement</div>
-                        <div class="poste-salary">~3 000€/mois</div>
-                    </div>
-                    <div class="poste-item" data-poste="compta" data-salary="2900">
-                        <div class="poste-icon">🧾</div>
-                        <div class="poste-name">Comptabilité</div>
-                        <div class="poste-salary">~2 900€/mois</div>
-                    </div>
-                    <div class="poste-item" data-poste="legal" data-salary="4500">
-                        <div class="poste-icon">⚖️</div>
-                        <div class="poste-name">Juridique</div>
-                        <div class="poste-salary">~4 500€/mois</div>
-                    </div>
-                </div>
+            <div class="sector-card" data-sector="finance">
+                <span class="s-icon">📊</span>
+                <div class="s-name">Finance & Banque</div>
+                <div class="s-hint">KYC, reporting, risque</div>
             </div>
-
-            <div class="guarantee-strip">
-                <span class="g-icon">🔒</span>
-                Productivité garantie ou remboursé — 30 jours
+            <div class="sector-card" data-sector="marketing">
+                <span class="s-icon">📣</span>
+                <div class="s-name">Marketing & Growth</div>
+                <div class="s-hint">Agences, e-com</div>
+            </div>
+            <div class="sector-card" data-sector="immo">
+                <span class="s-icon">🏗️</span>
+                <div class="s-name">Immobilier</div>
+                <div class="s-hint">Agences, gestion</div>
+            </div>
+            <div class="sector-card" data-sector="rh">
+                <span class="s-icon">👥</span>
+                <div class="s-name">RH & Recrutement</div>
+                <div class="s-hint">DRH, cabinets RH</div>
+            </div>
+            <div class="sector-card" data-sector="retail">
+                <span class="s-icon">🛒</span>
+                <div class="s-name">Retail & E-Commerce</div>
+                <div class="s-hint">Marques, boutiques</div>
             </div>
         </div>
 
-        <!-- RIGHT: Results -->
-        <div class="sim-results" id="simResults">
+        <div class="panel-title" style="margin-top:2rem;margin-bottom:0.5rem;">
+            <h2 style="font-size:1.3rem;">Combien d'employés concernés ?</h2>
+            <p style="font-size:0.82rem;">Ceux dont une partie du travail est répétitive ou traitable par IA.</p>
+        </div>
 
-            <!-- Big savings -->
-            <div class="result-card">
-                <div class="big-savings">
-                    <div class="amount" id="resSavingsYear">—</div>
-                    <div class="sub">d'économies estimées par an</div>
+        <div class="emp-dial">
+            <button class="dial-btn" id="empMinus">−</button>
+            <div>
+                <div class="dial-val" id="empVal">8</div>
+                <div class="dial-lbl">employés</div>
+            </div>
+            <button class="dial-btn" id="empPlus">+</button>
+        </div>
+
+        <div class="nav-row centered">
+            <button class="btn-next" id="toStep2">
+                Choisir mes tâches
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ─────────────────────────────── STEP 2 ─────────────────────────────── -->
+    <div class="panel" id="panel2">
+        <div class="panel-title">
+            <span class="step-label">Étape 2 sur 3</span>
+            <h2>Quelles tâches automatiser ?</h2>
+            <p>Sélectionnez les tâches répétitives de vos équipes. Plus vous en choisissez, plus le ROI est précis.</p>
+        </div>
+
+        <div class="tally-bar">
+            <div class="tally-item">
+                <div class="tally-val accent" id="tallyTasks">0</div>
+                <div class="tally-lbl">tâches sélectionnées</div>
+            </div>
+            <div class="tally-item">
+                <div class="tally-val green" id="tallyHours">0h</div>
+                <div class="tally-lbl">heures auto / semaine</div>
+            </div>
+            <div class="tally-item">
+                <div class="tally-val" id="tallyAgents" style="color:#f472b6;">0</div>
+                <div class="tally-lbl">agents IA requis</div>
+            </div>
+            <div class="tally-item">
+                <div class="tally-val" id="tallySaving" style="color:#fbbf24;">—</div>
+                <div class="tally-lbl">économie estimée / an</div>
+            </div>
+        </div>
+
+        <div class="tasks-grid" id="tasksGrid"></div>
+
+        <div class="nav-row">
+            <button class="btn-prev" id="toStep1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                Retour
+            </button>
+            <button class="btn-next" id="toStep3">
+                Lancer la simulation
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ─────────────────────────────── STEP 3 ─────────────────────────────── -->
+    <div class="panel" id="panel3">
+        <div id="loadingScreen" class="sim-loading">
+            <div class="sim-spinner"></div>
+            <div>
+                <div class="sim-loading-text">Simulation en cours…</div>
+                <div class="sim-agent-feed" id="agentFeed"></div>
+            </div>
+        </div>
+
+        <div class="results-wrap" id="resultsWrap">
+
+            <div class="panel-title" style="margin-bottom:1.5rem;">
+                <span class="step-label">Résultats — <span id="resSector">votre secteur</span></span>
+                <h2>Voici votre impact IA</h2>
+            </div>
+
+            <!-- Hero savings -->
+            <div class="res-hero">
+                <div class="res-hero-label">Économies annuelles estimées</div>
+                <div class="res-hero-amount" id="heroAmount">0€</div>
+                <div class="res-hero-sub" id="heroSub">sur les tâches automatisables de votre équipe</div>
+                <div class="res-hero-badges">
+                    <span class="res-badge green" id="badgeHours">⏱ 0h récupérées / semaine</span>
+                    <span class="res-badge purple" id="badgeAgents">🤖 0 agents déployés</span>
+                    <span class="res-badge orange" id="badgeROI">📈 ROI en X mois</span>
                 </div>
+            </div>
 
-                <div class="compare-row">
-                    <div class="compare-label">Employés</div>
-                    <div class="compare-bar-wrap">
-                        <div class="compare-bar employee" id="barEmp" style="width:0%"></div>
+            <!-- Stats -->
+            <div class="res-stats">
+                <div class="res-stat">
+                    <div class="res-stat-val" id="statMonth" style="color:var(--green);">—</div>
+                    <div class="res-stat-lbl">Économie mensuelle</div>
+                </div>
+                <div class="res-stat">
+                    <div class="res-stat-val" id="statHours" style="color:#818cf8;">—</div>
+                    <div class="res-stat-lbl">Heures récupérées / mois</div>
+                </div>
+                <div class="res-stat">
+                    <div class="res-stat-val" id="statAuto" style="color:#f472b6;">—</div>
+                    <div class="res-stat-lbl">Taux d'automatisation</div>
+                </div>
+            </div>
+
+            <!-- GAME CHANGER: Live agent feed -->
+            <div class="live-feed">
+                <div class="live-feed-title">
+                    <span class="live-dot"></span>
+                    Flux en direct — agents au travail
+                </div>
+                <div class="live-entries" id="liveFeed"></div>
+            </div>
+
+            <!-- GAME CHANGER: Workday timeline -->
+            <div class="timeline-section">
+                <div class="timeline-header">
+                    <div class="timeline-title">⏰ Journée type : Avant vs Après NexusAI</div>
+                    <div class="timeline-legend">
+                        <span><span class="tl-dot" style="background:rgba(239,68,68,0.4)"></span> Manuel</span>
+                        <span><span class="tl-dot" style="background:rgba(34,197,94,0.5)"></span> Agent IA</span>
+                        <span><span class="tl-dot" style="background:rgba(255,255,255,0.06)"></span> Libre</span>
                     </div>
-                    <div class="compare-value cost-emp" id="valCostEmp">—</div>
                 </div>
-                <div class="compare-row">
-                    <div class="compare-label">Agents IA</div>
-                    <div class="compare-bar-wrap">
-                        <div class="compare-bar ai" id="barAI" style="width:0%"></div>
+                <div class="tl-hours">
+                    <div class="tl-hour">9h</div><div class="tl-hour">10h</div><div class="tl-hour">11h</div>
+                    <div class="tl-hour">12h</div><div class="tl-hour">14h</div><div class="tl-hour">15h</div>
+                    <div class="tl-hour">16h</div><div class="tl-hour">17h</div>
+                </div>
+                <div style="height:8px;"></div>
+                <div class="timeline-row">
+                    <div class="timeline-row-lbl">Sans IA</div>
+                    <div class="timeline-bars" id="timelineBefore"></div>
+                </div>
+                <div class="timeline-row">
+                    <div class="timeline-row-lbl">Avec IA</div>
+                    <div class="timeline-bars" id="timelineAfter"></div>
+                </div>
+            </div>
+
+            <!-- Payback gauge -->
+            <div class="gauge-section">
+                <div class="gauge-title">Délai de retour sur investissement</div>
+                <div class="gauge-wrap">
+                    <svg class="gauge-svg" viewBox="0 0 180 100">
+                        <path d="M 20 90 A 70 70 0 0 1 160 90" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="14" stroke-linecap="round"/>
+                        <path id="gaugePath" d="M 20 90 A 70 70 0 0 1 160 90" fill="none" stroke="url(#gaugeGrad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220" style="transition:stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1)"/>
+                        <defs>
+                            <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#22c55e"/>
+                                <stop offset="100%" stop-color="#6366f1"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="gauge-text">
+                        <div class="g-val" id="gaugeVal">—</div>
+                        <div class="g-lbl">mois</div>
                     </div>
-                    <div class="compare-value cost-ai" id="valCostAI">—</div>
                 </div>
+                <div class="gauge-desc" id="gaugeDesc">Calculez votre simulation pour voir le délai exact de rentabilisation.</div>
             </div>
 
-            <!-- Breakdown -->
-            <div class="result-card">
-                <h3>📋 Détail des coûts</h3>
-                <table class="breakdown-table">
-                    <thead>
-                        <tr>
-                            <th>Poste</th>
-                            <th style="text-align:right">Coût employé/an</th>
-                            <th style="text-align:right">Coût IA/an</th>
-                            <th style="text-align:right">Économie</th>
-                        </tr>
-                    </thead>
-                    <tbody id="breakdownBody"></tbody>
-                </table>
-            </div>
-
-            <!-- Productivity over months -->
-            <div class="result-card">
-                <h3>📈 Productivité mois par mois</h3>
-                <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:1rem;">
-                    Les agents IA s'améliorent avec le temps — les employés restent stables.
-                </p>
-                <div class="prod-chart" id="prodChart"></div>
-                <div style="display:flex;gap:1.5rem;justify-content:center;margin-top:0.8rem;">
-                    <span style="font-size:0.65rem;color:var(--text-secondary);display:flex;align-items:center;gap:0.3rem;">
-                        <span style="width:10px;height:10px;border-radius:3px;background:rgba(239,68,68,0.25);"></span> Employés
-                    </span>
-                    <span style="font-size:0.65rem;color:var(--text-secondary);display:flex;align-items:center;gap:0.3rem;">
-                        <span style="width:10px;height:10px;border-radius:3px;background:var(--green);"></span> Agents IA
-                    </span>
+            <!-- Agent recommendation -->
+            <div class="rec-section">
+                <div class="rec-header">
+                    <div>
+                        <div class="rec-label">Équipe recommandée</div>
+                        <div class="rec-team-name" id="recTeamName">Chargement…</div>
+                    </div>
+                    <button class="btn-reset" onclick="resetSim()">↩ Refaire la simulation</button>
                 </div>
-            </div>
-
-            <!-- Recommended plan -->
-            <div class="result-card">
-                <h3>🎯 Plan recommandé</h3>
-                <div class="recommended-plan">
-                    <div class="plan-name" id="recPlanName">—</div>
-                    <div class="plan-price" id="recPlanPrice">—</div>
-                    <div class="plan-roi" id="recPlanRoi">—</div>
-                    <a href="index.html#tarifs" class="plan-btn">Voir le plan →</a>
+                <div class="rec-agents" id="recAgents"></div>
+                <div class="rec-cta">
+                    <a href="index.html#contact" class="btn-primary" onclick="(window.openCalendly||function(){window.location='index.html#contact'})(); return false;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Déployer cette équipe →
+                    </a>
+                    <a href="index.html#tarifs" class="btn-secondary">Voir les offres</a>
                 </div>
             </div>
 
         </div>
+
+        <div class="nav-row" id="resultNav" style="display:none;">
+            <button class="btn-prev" onclick="resetSim()">↩ Recommencer</button>
+        </div>
     </div>
-</div>
+
+</main>
 
 <script>
-(function() {
-    // Elements
-    const slEmp = document.getElementById('slEmp');
-    const slHrs = document.getElementById('slHrs');
-    const selSector = document.getElementById('selSector');
-    const valEmp = document.getElementById('valEmp');
-    const valHrs = document.getElementById('valHrs');
-    const posteGrid = document.getElementById('posteGrid');
-    const posteItems = posteGrid.querySelectorAll('.poste-item');
+(function(){
+// ─── Data ───────────────────────────────────────────────────────────────────
+const SECTORS = {
+    juridique:{ label:'Droit & Juridique', orch:'ARTHUR', orole:'Stratège Juridique' },
+    sante:{ label:'Santé & Médical', orch:'HIPPO', orole:'Coordinateur Médical' },
+    hotel:{ label:'Hôtellerie', orch:'BUTLER', orole:'Directeur Expérience' },
+    finance:{ label:'Finance & Banque', orch:'SIGMA', orole:'Stratège Financier' },
+    marketing:{ label:'Marketing & Growth', orch:'SPARK', orole:'Stratège Growth' },
+    immo:{ label:'Immobilier', orch:'ATLAS', orole:'Directeur Commercial' },
+    rh:{ label:'RH & Recrutement', orch:'HELIA', orole:'DRH Augmenté' },
+    retail:{ label:'Retail & E-Commerce', orch:'NEXO', orole:'Directeur Retail' }
+};
 
-    // Sector multipliers (cost-of-living / complexity)
-    const sectorMult = {
-        tech: 1.2, finance: 1.35, sante: 1.15, ecommerce: 1.0,
-        immobilier: 1.1, juridique: 1.4, education: 0.9, autre: 1.0
-    };
+const TASKS_BY_SECTOR = {
+    juridique:[
+        {id:'contrats',icon:'📄',name:'Analyse de contrats',hrs:8,auto:0.82,agent:'LEX',role:'Analyse'},
+        {id:'veille',icon:'🔍',name:'Veille réglementaire',hrs:5,auto:0.90,agent:'CONFORME',role:'Compliance'},
+        {id:'redac',icon:'✍️',name:'Rédaction de clauses',hrs:6,auto:0.70,agent:'CLAUSE',role:'Rédaction'},
+        {id:'dd',icon:'🔎',name:'Due diligence',hrs:7,auto:0.65,agent:'DUE',role:'M&A'},
+        {id:'juris',icon:'⚖️',name:'Recherche jurisprudence',hrs:4,auto:0.88,agent:'VERDICT',role:'Recherche'},
+        {id:'notif',icon:'🔔',name:'Suivi délais & notifications',hrs:3,auto:0.95,agent:'NOTIF',role:'Alertes'},
+    ],
+    sante:[
+        {id:'dossiers',icon:'📋',name:'Gestion dossiers patients',hrs:9,auto:0.80,agent:'ANAMNESE',role:'Dossiers'},
+        {id:'codif',icon:'🏷️',name:'Codification médicale',hrs:6,auto:0.92,agent:'CODEX',role:'Facturation'},
+        {id:'cr',icon:'🎙️',name:'Comptes-rendus médicaux',hrs:8,auto:0.75,agent:'CR-MED',role:'Rédaction'},
+        {id:'rdv',icon:'📅',name:'Gestion planning & rappels',hrs:4,auto:0.95,agent:'RDVMED',role:'Agenda'},
+        {id:'pharma',icon:'💊',name:'Contrôle interactions méd.',hrs:3,auto:0.88,agent:'PHARMA',role:'Sécurité'},
+        {id:'factmed',icon:'💶',name:'Facturation tiers-payant',hrs:5,auto:0.85,agent:'TIERS',role:'CPAM'},
+    ],
+    hotel:[
+        {id:'resa',icon:'🛎️',name:'Gestion réservations',hrs:7,auto:0.88,agent:'REZA',role:'Booking'},
+        {id:'rev',icon:'💰',name:'Revenue management',hrs:5,auto:0.80,agent:'REVMAX',role:'Yield'},
+        {id:'avis',icon:'⭐',name:'Réponses aux avis',hrs:4,auto:0.92,agent:'REVIEW',role:'E-rép'},
+        {id:'conc',icon:'🗺️',name:'Recommandations clients',hrs:5,auto:0.85,agent:'CONCIERGE',role:'XP'},
+        {id:'house',icon:'🧹',name:'Planning ménage & staff',hrs:4,auto:0.78,agent:'HOUSEKEEP',role:'Ops'},
+        {id:'upsell',icon:'📈',name:'Upsell & upgrades auto',hrs:3,auto:0.90,agent:'UPSELL',role:'Revenue'},
+    ],
+    finance:[
+        {id:'kyc',icon:'🪪',name:'KYC / Vérification clients',hrs:8,auto:0.85,agent:'COMPLY',role:'Compliance'},
+        {id:'report',icon:'📊',name:'Reporting réglementaire',hrs:7,auto:0.88,agent:'REPORT',role:'Reporting'},
+        {id:'risk',icon:'⚠️',name:'Analyse de risque',hrs:6,auto:0.72,agent:'RISK',role:'Risk'},
+        {id:'recap',icon:'🧮',name:'Rapprochement comptable',hrs:5,auto:0.90,agent:'LEDGER',role:'Compta'},
+        {id:'fraude',icon:'🚨',name:'Détection anomalies',hrs:4,auto:0.95,agent:'ALERT',role:'Fraude'},
+        {id:'forecast',icon:'📉',name:'Prévision trésorerie',hrs:4,auto:0.75,agent:'FORECAST',role:'Budget'},
+    ],
+    marketing:[
+        {id:'content',icon:'✍️',name:'Création de contenu',hrs:10,auto:0.75,agent:'CONTENT',role:'Contenu'},
+        {id:'seo',icon:'🔍',name:'Optimisation SEO',hrs:5,auto:0.80,agent:'SERAPH',role:'SEO'},
+        {id:'ads',icon:'📢',name:'Gestion campagnes ads',hrs:6,auto:0.70,agent:'ADS',role:'Paid'},
+        {id:'social',icon:'📱',name:'Social media & scheduling',hrs:7,auto:0.85,agent:'SOCIAL',role:'Social'},
+        {id:'analytics',icon:'📊',name:'Analyse & reporting',hrs:4,auto:0.88,agent:'INSIGHT',role:'Data'},
+        {id:'email',icon:'📧',name:'Email & automation',hrs:5,auto:0.82,agent:'DRIP',role:'Email'},
+    ],
+    immo:[
+        {id:'leads',icon:'🎯',name:'Sourcing & qualification leads',hrs:7,auto:0.80,agent:'SCOUT',role:'Prospection'},
+        {id:'estim',icon:'🏠',name:'Estimation des biens',hrs:5,auto:0.75,agent:'ESTIM',role:'Estimation'},
+        {id:'docs',icon:'📁',name:'Gestion documentaire',hrs:6,auto:0.88,agent:'DOCIMO',role:'Juridique'},
+        {id:'visites',icon:'🗓️',name:'Planification visites',hrs:4,auto:0.92,agent:'VISIT',role:'Agenda'},
+        {id:'gestion',icon:'🔑',name:'Gestion locative',hrs:5,auto:0.82,agent:'RENTAL',role:'Gestion'},
+        {id:'comply_i',icon:'📋',name:'Diagnostics & conformité',hrs:3,auto:0.85,agent:'COMPLY-IMM',role:'DPE'},
+    ],
+    rh:[
+        {id:'cv',icon:'📄',name:'Tri CV & pré-qualification',hrs:8,auto:0.88,agent:'SORTER',role:'Recrutement'},
+        {id:'onboard',icon:'🎓',name:'Onboarding collaborateurs',hrs:5,auto:0.80,agent:'ONBOARD',role:'Intégration'},
+        {id:'paie',icon:'💳',name:'Calcul paie & bulletins',hrs:6,auto:0.85,agent:'PAIE',role:'Paie'},
+        {id:'form',icon:'📚',name:'Plans de formation',hrs:4,auto:0.78,agent:'FORM',role:'Formation'},
+        {id:'talent',icon:'💡',name:'Détection talents internes',hrs:3,auto:0.70,agent:'TALENT',role:'Mobilité'},
+        {id:'engage',icon:'❤️',name:'Engagement & satisfaction',hrs:3,auto:0.75,agent:'WELLBEING',role:'Culture'},
+    ],
+    retail:[
+        {id:'catalog',icon:'🗃️',name:'Gestion catalogue produits',hrs:7,auto:0.85,agent:'CATALOG',role:'Catalogue'},
+        {id:'pricing',icon:'🏷️',name:'Pricing dynamique',hrs:4,auto:0.88,agent:'PRICER',role:'Pricing'},
+        {id:'sav_r',icon:'🎧',name:'Service client / SAV',hrs:8,auto:0.80,agent:'SAV',role:'Support'},
+        {id:'stock',icon:'📦',name:'Gestion des stocks',hrs:5,auto:0.82,agent:'STOCK',role:'Logistique'},
+        {id:'cross',icon:'🔄',name:'Cross-sell & recommandations',hrs:3,auto:0.78,agent:'CROSS',role:'Conversion'},
+        {id:'retours',icon:'↩️',name:'Gestion retours & litiges',hrs:4,auto:0.75,agent:'RETURN',role:'Après-vente'},
+    ]
+};
 
-    // Automation efficiency by poste
-    const autoRate = {
-        support: 0.78, admin: 0.85, data: 0.60, marketing: 0.55,
-        dev: 0.40, rh: 0.65, compta: 0.80, legal: 0.50
-    };
+const SALARY_BY_SECTOR = {
+    juridique:4200, sante:3200, hotel:2800, finance:4800,
+    marketing:3400, immo:3000, rh:3200, retail:2600
+};
 
-    // Agent names by poste
-    const agentNames = {
-        support: 'SupportBot', admin: 'AutoAdmin', data: 'DataLens',
-        marketing: 'MarketAI', dev: 'CodeAssist', rh: 'TalentScan',
-        compta: 'ComptaFlow', legal: 'LegalMind'
-    };
+const FEED_MESSAGES = [
+    ['LEX', 'a analysé 12 contrats', '+4h20'],
+    ['CONFORME', 'a scanné 3 nouvelles directives EU', '+1h45'],
+    ['SORTER', 'a traité 47 candidatures', '+6h10'],
+    ['SIGMA', 'a généré le rapport mensuel', '+2h30'],
+    ['CONTENT', 'a rédigé 8 articles SEO', '+9h00'],
+    ['REZA', 'a traité 23 réservations', '+3h15'],
+    ['CODEX', 'a codifié 34 actes médicaux', '+2h50'],
+    ['ALERT', 'a détecté 2 anomalies', '+0h45'],
+    ['SCOUT', 'a qualifié 18 leads entrants', '+5h20'],
+    ['DRIP', 'a envoyé 1 200 emails personnalisés', '+4h00'],
+    ['REVIEW', 'a répondu à 15 avis Google', '+2h10'],
+    ['PAIE', 'a calculé 28 bulletins de paie', '+7h30'],
+];
 
-    // Poste selection
-    posteItems.forEach(item => {
-        item.addEventListener('click', () => {
-            item.classList.toggle('selected');
-            calculate();
+// ─── State ───────────────────────────────────────────────────────────────────
+let state = { sector:'juridique', employees:8, selectedTasks:[] };
+
+// ─── Step 1 ───────────────────────────────────────────────────────────────────
+document.querySelectorAll('.sector-card').forEach(c => {
+    c.addEventListener('click', () => {
+        document.querySelectorAll('.sector-card').forEach(x => x.classList.remove('selected'));
+        c.classList.add('selected');
+        state.sector = c.dataset.sector;
+    });
+});
+
+let empVal = 8;
+const empDisplay = document.getElementById('empVal');
+document.getElementById('empMinus').addEventListener('click', () => {
+    empVal = Math.max(1, empVal - 1);
+    empDisplay.textContent = empVal;
+});
+document.getElementById('empPlus').addEventListener('click', () => {
+    empVal = Math.min(500, empVal + 1);
+    empDisplay.textContent = empVal;
+});
+// Long press
+['empMinus','empPlus'].forEach(id => {
+    let interval;
+    const btn = document.getElementById(id);
+    btn.addEventListener('mousedown', () => {
+        interval = setInterval(() => {
+            btn.click();
+        }, 80);
+    });
+    btn.addEventListener('mouseup', () => clearInterval(interval));
+    btn.addEventListener('mouseleave', () => clearInterval(interval));
+});
+
+document.getElementById('toStep2').addEventListener('click', () => {
+    state.employees = empVal;
+    buildTasksGrid();
+    goToStep(2);
+});
+
+// ─── Step 2 ───────────────────────────────────────────────────────────────────
+function buildTasksGrid() {
+    const tasks = TASKS_BY_SECTOR[state.sector];
+    const grid = document.getElementById('tasksGrid');
+    grid.innerHTML = tasks.map(t => `
+        <div class="task-card selected" data-task="${t.id}" data-hrs="${t.hrs}" data-auto="${t.auto}" data-agent="${t.agent}" data-role="${t.role}">
+            <div class="t-check">✓</div>
+            <span class="t-icon">${t.icon}</span>
+            <div class="t-name">${t.name}</div>
+            <div class="t-time">${t.hrs}h / semaine / personne</div>
+            <div class="t-auto" style="color:var(--green);margin-top:0.4rem;">${Math.round(t.auto*100)}% automatisable</div>
+        </div>
+    `).join('');
+    grid.querySelectorAll('.task-card').forEach(c => {
+        c.addEventListener('click', () => {
+            c.classList.toggle('selected');
+            updateTally();
         });
     });
+    // Pre-select all
+    state.selectedTasks = tasks.map(t => t.id);
+    updateTally();
+}
 
-    // Sliders
-    slEmp.addEventListener('input', calculate);
-    slHrs.addEventListener('input', calculate);
-    selSector.addEventListener('change', calculate);
+function getSelectedTasks() {
+    return Array.from(document.querySelectorAll('.task-card.selected')).map(c => ({
+        id: c.dataset.task,
+        hrs: parseFloat(c.dataset.hrs),
+        auto: parseFloat(c.dataset.auto),
+        agent: c.dataset.agent,
+        role: c.dataset.role,
+    }));
+}
 
-    function formatK(n) {
-        if (n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'M€';
-        if (n >= 1000) return Math.round(n/1000) + 'K€';
-        return Math.round(n) + '€';
+function updateTally() {
+    const tasks = getSelectedTasks();
+    const totalHrs = tasks.reduce((s, t) => s + t.hrs * t.auto * state.employees, 0);
+    const agents = Math.max(1, Math.ceil(tasks.length * 0.8));
+    const salary = SALARY_BY_SECTOR[state.sector];
+    const saving = tasks.reduce((s, t) => {
+        const yEmp = t.hrs * t.auto * state.employees * salary / 40 * 52;
+        return s + yEmp * 0.88;
+    }, 0);
+    document.getElementById('tallyTasks').textContent = tasks.length;
+    document.getElementById('tallyHours').textContent = Math.round(totalHrs) + 'h';
+    document.getElementById('tallyAgents').textContent = agents;
+    document.getElementById('tallySaving').textContent = formatK(saving);
+    document.getElementById('toStep3').disabled = tasks.length === 0;
+}
+
+document.getElementById('toStep1').addEventListener('click', () => goToStep(1));
+document.getElementById('toStep3').addEventListener('click', () => {
+    goToStep(3);
+    runSimulation();
+});
+
+// ─── Step 3 ───────────────────────────────────────────────────────────────────
+function runSimulation() {
+    document.getElementById('loadingScreen').style.display = 'flex';
+    document.getElementById('resultsWrap').classList.remove('visible');
+    document.getElementById('resultNav').style.display = 'none';
+
+    const tasks = getSelectedTasks();
+    const sector = SECTORS[state.sector];
+    const salary = SALARY_BY_SECTOR[state.sector];
+
+    // Loading messages
+    const loadMsgs = [
+        'Déploiement de ' + sector.orch + '…',
+        'Analyse de vos processus…',
+        'Calcul du potentiel d\'automatisation…',
+        'Génération des agents spécialisés…',
+        'Simulation de votre journée type…',
+        'Calcul du ROI sur 12 mois…',
+        'Rapport prêt ✓',
+    ];
+    const feedEl = document.getElementById('agentFeed');
+    let mi = 0;
+    const msgInterval = setInterval(() => {
+        feedEl.textContent = loadMsgs[mi % loadMsgs.length];
+        mi++;
+    }, 380);
+
+    setTimeout(() => {
+        clearInterval(msgInterval);
+        document.getElementById('loadingScreen').style.display = 'none';
+        showResults(tasks, sector, salary);
+    }, 2700);
+}
+
+function showResults(tasks, sector, salary) {
+    const emp = state.employees;
+
+    // Calculations
+    const totalHrsWeek = tasks.reduce((s, t) => s + t.hrs * t.auto * emp, 0);
+    const totalHrsMon = totalHrsWeek * 4.33;
+    const totalSavingYear = tasks.reduce((s, t) => {
+        return s + t.hrs * t.auto * emp * (salary / 40 * 52) * 0.88;
+    }, 0);
+    const totalSavingMon = totalSavingYear / 12;
+    const agentCount = Math.max(1, Math.ceil(tasks.length * 0.8));
+    const autoRate = tasks.reduce((s, t) => s + t.auto, 0) / Math.max(tasks.length, 1);
+
+    // Plan
+    let payback, deployPrice;
+    if (agentCount <= 3) { deployPrice = 990; payback = deployPrice / totalSavingMon; }
+    else if (agentCount <= 8) { deployPrice = 1990; payback = deployPrice / totalSavingMon; }
+    else { deployPrice = 3500; payback = deployPrice / totalSavingMon; }
+    payback = Math.max(0.5, Math.min(payback, 12));
+
+    // ── Hero
+    document.getElementById('resSector').textContent = sector.label;
+    animCount('heroAmount', 0, totalSavingYear, 1800, v => formatK(v) + '/an', 'var(--green)');
+    document.getElementById('heroSub').textContent = `Basé sur ${emp} employés et ${tasks.length} processus automatisables`;
+    document.getElementById('badgeHours').textContent = '⏱ ' + Math.round(totalHrsWeek) + 'h récupérées / semaine';
+    document.getElementById('badgeAgents').textContent = '🤖 ' + agentCount + ' agents déployés';
+    document.getElementById('badgeROI').textContent = '📈 ROI en ' + (payback < 1 ? Math.round(payback*30) + ' jours' : payback.toFixed(1) + ' mois');
+
+    // ── Stats
+    animCount('statMonth', 0, totalSavingMon, 1400, v => formatK(v), 'var(--green)');
+    animCount('statHours', 0, totalHrsMon, 1200, v => Math.round(v) + 'h', '#818cf8');
+    animCount('statAuto', 0, autoRate * 100, 1000, v => Math.round(v) + '%', '#f472b6');
+
+    // ── Live feed
+    startLiveFeed();
+
+    // ── Timeline
+    buildTimeline(tasks);
+
+    // ── Gauge
+    setTimeout(() => {
+        const pct = Math.max(0.1, Math.min(1, 1 - (payback / 12)));
+        const offset = 220 - (220 * pct);
+        document.getElementById('gaugePath').style.strokeDashoffset = offset;
+        document.getElementById('gaugeVal').textContent = payback < 1 ? '<1' : payback.toFixed(1);
+        document.getElementById('gaugeDesc').textContent =
+            `À ce rythme, votre investissement NexusAI est rentabilisé en ${payback < 1 ? 'moins d\'1 mois' : payback.toFixed(1) + ' mois'}, puis votre équipe IA génère un profit net en continu.`;
+    }, 600);
+
+    // ── Agents recommendation
+    document.getElementById('recTeamName').textContent = sector.label + ' — ' + agentCount + ' agents';
+    const recAgentsEl = document.getElementById('recAgents');
+    // Orchestrator first
+    const agents = [{ name: sector.orch, role: sector.orole }, ...tasks.slice(0, agentCount - 1).map(t => ({ name: t.agent, role: t.role }))];
+    recAgentsEl.innerHTML = agents.map(a => `
+        <div class="rec-agent">
+            <div class="rec-agent-avatar">${a.name.slice(0,2)}</div>
+            <div class="rec-agent-info">
+                <div class="rec-agent-name">${a.name}</div>
+                <div class="rec-agent-role">${a.role}</div>
+            </div>
+        </div>
+    `).join('');
+
+    document.getElementById('resultsWrap').classList.add('visible');
+    document.getElementById('resultNav').style.display = 'flex';
+}
+
+function buildTimeline(tasks) {
+    const hours = ['9h','10h','11h','12h','14h','15h','16h','17h'];
+    const before = document.getElementById('timelineBefore');
+    const after = document.getElementById('timelineAfter');
+
+    // Before: mostly manual (red), some free
+    const beforeBlocks = tasks.slice(0, 8).map((t, i) => ({
+        type: i < 6 ? 'manual' : 'free',
+        label: i < 6 ? t.agent.split('-')[0] : '—'
+    }));
+    while (beforeBlocks.length < 8) beforeBlocks.push({ type: 'free', label: '—' });
+
+    // After: mostly AI (green), some free
+    const afterBlocks = tasks.slice(0, 8).map((t, i) => ({
+        type: i < 5 ? 'ai' : 'free',
+        label: i < 5 ? t.agent.split('-')[0] : 'Libre'
+    }));
+    while (afterBlocks.length < 8) afterBlocks.push({ type: 'free', label: 'Libre' });
+
+    before.innerHTML = beforeBlocks.map(b =>
+        `<div class="tl-block ${b.type}" style="animation-delay:${Math.random()*0.3}s">${b.label}</div>`
+    ).join('');
+    after.innerHTML = afterBlocks.map(b =>
+        `<div class="tl-block ${b.type}" style="animation-delay:${Math.random()*0.3}s">${b.label}</div>`
+    ).join('');
+}
+
+let feedInterval = null;
+function startLiveFeed() {
+    if (feedInterval) clearInterval(feedInterval);
+    const el = document.getElementById('liveFeed');
+    el.innerHTML = '';
+    let i = Math.floor(Math.random() * FEED_MESSAGES.length);
+    function addEntry() {
+        const [agent, task, stat] = FEED_MESSAGES[i % FEED_MESSAGES.length];
+        const entry = document.createElement('div');
+        entry.className = 'live-entry';
+        entry.innerHTML = `<span class="le-agent">${agent}</span><span class="le-task">${task}</span><span class="le-stat">${stat} écon.</span>`;
+        el.insertBefore(entry, el.firstChild);
+        if (el.children.length > 3) el.removeChild(el.lastChild);
+        i++;
     }
+    addEntry();
+    feedInterval = setInterval(addEntry, 2200);
+}
 
-    function calculate() {
-        const numEmp = parseInt(slEmp.value);
-        const hrs = parseInt(slHrs.value);
-        const sector = selSector.value;
-        const mult = sectorMult[sector];
-
-        valEmp.textContent = numEmp;
-        valHrs.textContent = hrs;
-
-        const selectedPostes = [];
-        posteItems.forEach(item => {
-            if (item.classList.contains('selected')) {
-                selectedPostes.push({
-                    name: item.querySelector('.poste-name').textContent,
-                    poste: item.dataset.poste,
-                    salary: parseInt(item.dataset.salary)
-                });
-            }
-        });
-
-        if (selectedPostes.length === 0) {
-            selectedPostes.push({ name: 'Support client', poste: 'support', salary: 2800 });
-        }
-
-        // Distribute employees across selected postes
-        const empPerPoste = numEmp / selectedPostes.length;
-        const hrsRatio = hrs / 40; // proportion of work that's automatable
-
-        let totalCostEmp = 0;
-        let totalCostAI = 0;
-        const breakdown = [];
-
-        selectedPostes.forEach(p => {
-            const adjustedSalary = p.salary * mult;
-            const yearlyCostEmp = empPerPoste * adjustedSalary * 12 * 1.45; // charges patronales ~45%
-            const efficiency = autoRate[p.poste] || 0.6;
-            const automatable = yearlyCostEmp * hrsRatio * efficiency;
-            // IA cost: ~5-15% of what it replaces (infra + maintenance)
-            const iaCostRatio = 0.08 + (1 - efficiency) * 0.1;
-            const iaCost = automatable * iaCostRatio;
-            const saving = automatable - iaCost;
-
-            totalCostEmp += yearlyCostEmp * hrsRatio;
-            totalCostAI += iaCost;
-
-            breakdown.push({
-                name: p.name,
-                agent: agentNames[p.poste] || 'Agent IA',
-                costEmp: yearlyCostEmp * hrsRatio,
-                costAI: iaCost,
-                saving,
-                efficiency: Math.round(efficiency * 100)
-            });
-        });
-
-        const totalSaving = totalCostEmp - totalCostAI;
-
-        // Update big savings
-        document.getElementById('resSavingsYear').textContent = formatK(totalSaving) + '/an';
-
-        // Update bars
-        const maxCost = Math.max(totalCostEmp, totalCostAI);
-        document.getElementById('barEmp').style.width = '100%';
-        document.getElementById('barAI').style.width = Math.round((totalCostAI / totalCostEmp) * 100) + '%';
-        document.getElementById('valCostEmp').textContent = formatK(totalCostEmp) + '/an';
-        document.getElementById('valCostAI').textContent = formatK(totalCostAI) + '/an';
-
-        // Breakdown table
-        const tbody = document.getElementById('breakdownBody');
-        tbody.innerHTML = breakdown.map(b => `
-            <tr>
-                <td><strong>${b.name}</strong><br><span style="font-size:0.7rem;color:var(--text-secondary);">→ ${b.agent} (${b.efficiency}% auto.)</span></td>
-                <td class="cost-emp">${formatK(b.costEmp)}</td>
-                <td class="cost-ai">${formatK(b.costAI)}</td>
-                <td class="saving">${formatK(b.saving)}</td>
-            </tr>
-        `).join('') + `
-            <tr style="border-top:2px solid var(--border);font-weight:800;">
-                <td><strong>TOTAL</strong></td>
-                <td class="cost-emp">${formatK(totalCostEmp)}</td>
-                <td class="cost-ai">${formatK(totalCostAI)}</td>
-                <td class="saving">${formatK(totalSaving)}</td>
-            </tr>
-        `;
-
-        // Productivity chart
-        const chart = document.getElementById('prodChart');
-        const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-        chart.innerHTML = months.map((m, i) => {
-            const empH = 50 + Math.random() * 10; // stable ~50-60
-            const aiH = 30 + (i * 7) + Math.random() * 5; // growing
-            return `
-                <div class="prod-bar-group">
-                    <div class="prod-bars">
-                        <div class="prod-bar emp" style="height:${empH}px"></div>
-                        <div class="prod-bar ai" style="height:${Math.min(aiH, 110)}px"></div>
-                    </div>
-                    <span class="prod-month">${m}</span>
-                </div>
-            `;
-        }).join('');
-
-        // Recommended plan
-        const agentCount = selectedPostes.length * Math.ceil(empPerPoste / 4);
-        let planName, planPrice, payback;
-        if (agentCount <= 3) {
-            planName = 'Plan Créateur';
-            planPrice = '990€ + 199€/mois';
-            payback = totalSaving > 0 ? Math.max(0.1, (990 + 199) / (totalSaving / 12)) : 99;
-        } else if (agentCount <= 12) {
-            planName = 'Plan Business';
-            planPrice = '1 990€ + 349€/mois';
-            payback = totalSaving > 0 ? Math.max(0.1, (1990 + 349) / (totalSaving / 12)) : 99;
-        } else {
-            planName = 'Plan Sur Mesure';
-            planPrice = 'À partir de 3 500€';
-            payback = totalSaving > 0 ? Math.max(0.1, 3500 / (totalSaving / 12)) : 99;
-        }
-
-        document.getElementById('recPlanName').textContent = planName;
-        document.getElementById('recPlanPrice').textContent = planPrice;
-
-        if (payback < 1) {
-            document.getElementById('recPlanRoi').textContent = `Rentabilisé en ${Math.round(payback * 30)} jours`;
-        } else {
-            document.getElementById('recPlanRoi').textContent = `Rentabilisé en ${payback.toFixed(1)} mois`;
-        }
+// ─── Navigation ───────────────────────────────────────────────────────────────
+function goToStep(n) {
+    document.querySelectorAll('.panel').forEach((p, i) => {
+        p.classList.toggle('active', i + 1 === n);
+    });
+    document.getElementById('progressFill').style.width = (n / 3 * 100) + '%';
+    // Update step nav
+    for (let i = 1; i <= 3; i++) {
+        const nav = document.getElementById('stepNav' + i);
+        const conn = document.getElementById('conn' + (i - 1));
+        nav.classList.remove('active', 'done');
+        if (i < n) { nav.classList.add('done'); nav.querySelector('.step-num').textContent = '✓'; }
+        else if (i === n) { nav.classList.add('active'); nav.querySelector('.step-num').textContent = i; }
+        else { nav.querySelector('.step-num').textContent = i; }
+        if (conn) conn.classList.toggle('done', n > i);
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-    // Initial calc
-    calculate();
+window.resetSim = function() {
+    if (feedInterval) { clearInterval(feedInterval); feedInterval = null; }
+    goToStep(1);
+};
+
+// ─── Helpers ───────────────────────────────────────────────────────────────────
+function formatK(n) {
+    if (n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'M€';
+    if (n >= 1000) return Math.round(n/1000) + 'K€';
+    return Math.round(n) + '€';
+}
+
+function animCount(id, from, to, dur, fmt, color) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (color) el.style.color = color;
+    const start = performance.now();
+    function tick(now) {
+        const pct = Math.min((now - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - pct, 3);
+        el.textContent = fmt(from + (to - from) * ease);
+        if (pct < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+}
+
+// Init
+buildTasksGrid();
 })();
 </script>
 </body>
