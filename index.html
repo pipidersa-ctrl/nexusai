@@ -4662,38 +4662,722 @@
         </div>
     </section>
 
-    <!-- GAME CHANGER: Build Your AI Crew Configurator -->
-    <section id="crew-builder" style="padding: 6rem 2rem; max-width: 1100px; margin: 0 auto;">
-        <div class="reveal" style="text-align: center;">
-            <div class="section-label">Configurateur</div>
-            <h2 class="section-title" style="margin: 0 auto;">Construisez votre <span class="gradient-text">équipe IA</span></h2>
-            <p class="section-desc" style="margin: 1rem auto 0;">Sélectionnez les agents dont vous avez besoin. Le plan s'adapte automatiquement.
-                <span class="help-tooltip" data-help="crew">
-                    <span class="help-icon">?</span> C'est quoi un agent ?
-                    <div class="help-popup">
-                        <div class="help-popup-title"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> Qu'est-ce qu'un agent IA ?</div>
-                        <div class="help-popup-text">Un agent IA est un <strong>programme autonome spécialisé</strong> dans une tâche précise : analyser des données, rédiger du contenu, traiter des emails, extraire des informations... Les agents collaborent entre eux via NATHAN, l'<strong>orchestrateur central</strong>.</div>
-                        <a href="god-view.html" class="help-popup-cta">Voir les 33 agents en action →</a>
-                    </div>
-                </span>
-            </p>
-            <div class="animated-line" style="margin: 1.5rem auto 0;"></div>
+    <!-- SECTORAL AI TEAMS -->
+    <style>
+        /* ── Sectoral Teams Section ── */
+        #crew-builder { padding: 6rem 2rem; max-width: 1180px; margin: 0 auto; }
+
+        .sector-tabs-wrap {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            margin: 2.5rem 0 0;
+            scrollbar-width: none;
+        }
+        .sector-tabs-wrap::-webkit-scrollbar { display: none; }
+
+        .sector-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.2rem;
+            border-radius: 100px;
+            border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.45);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            letter-spacing: 0.02em;
+        }
+        .sector-tab:hover {
+            border-color: rgba(99,102,241,0.25);
+            color: rgba(255,255,255,0.75);
+            background: rgba(99,102,241,0.06);
+        }
+        .sector-tab.active {
+            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(168,85,247,0.12));
+            border-color: rgba(99,102,241,0.3);
+            color: #c4b5fd;
+        }
+        .sector-tab-icon { font-size: 1rem; }
+
+        /* ── Game Changer: Cabinet vs NexusAI banner ── */
+        .vs-banner {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .vs-col {
+            flex: 1;
+            padding: 1.2rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .vs-col.traditional {
+            background: rgba(255,255,255,0.02);
+            border-right: 1px solid rgba(255,255,255,0.05);
+        }
+        .vs-col.nexus {
+            background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(168,85,247,0.04));
+        }
+        .vs-label {
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: 0.4;
+        }
+        .vs-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+        .vs-col.traditional .vs-value { color: rgba(255,255,255,0.35); text-decoration: line-through; }
+        .vs-col.nexus .vs-value {
+            background: linear-gradient(135deg, #818cf8, #a855f7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .vs-sub { font-size: 0.72rem; color: rgba(255,255,255,0.3); margin-top: 0.2rem; }
+        .vs-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1.2rem;
+            gap: 0.3rem;
+        }
+        .vs-badge {
+            background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(34,197,94,0.06));
+            border: 1px solid rgba(34,197,94,0.18);
+            color: #4ade80;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.25rem 0.6rem;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+        .vs-arrow-icon { font-size: 1.2rem; opacity: 0.2; }
+
+        /* ── Team Grid ── */
+        .team-panel { display: none; }
+        .team-panel.active { display: block; }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+        @media (max-width: 760px) {
+            .team-grid { grid-template-columns: 1fr; }
+            .vs-banner { flex-direction: column; }
+            .vs-col.traditional { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        }
+
+        .team-orchestrator-card {
+            background: linear-gradient(145deg, #0d0d1e, #141428);
+            border: 1px solid rgba(99,102,241,0.25);
+            border-radius: 18px;
+            padding: 1.8rem 1.4rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 8px 30px rgba(99,102,241,0.1);
+        }
+        .team-orchestrator-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 60%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent);
+        }
+        .orch-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #818cf8;
+            margin-bottom: 0.8rem;
+        }
+        .orch-avatar {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: white;
+            margin: 0 auto 0.8rem;
+            box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+        }
+        .orch-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            color: white;
+            letter-spacing: 1px;
+            margin-bottom: 0.3rem;
+        }
+        .orch-role {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.4;
+        }
+        .orch-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 6px rgba(34,197,94,0.6);
+            margin-right: 0.3rem;
+            vertical-align: middle;
+            animation: pulse-dot 2s infinite;
+        }
+
+        .agents-section-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.25);
+            margin-bottom: 0.8rem;
+        }
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+            gap: 0.7rem;
+        }
+        .agent-card {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 1rem 1rem 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
+        }
+        .agent-card:hover {
+            border-color: rgba(99,102,241,0.2);
+            background: rgba(99,102,241,0.04);
+            transform: translateY(-2px);
+        }
+        .agent-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.85);
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+        .agent-role {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.35);
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+        }
+        .agent-skill-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.58rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 0.18rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        /* ── Game Changer: Live Savings Ticker ── */
+        .gc-ticker {
+            margin-top: 2.5rem;
+            background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(168,85,247,0.04));
+            border: 1px solid rgba(99,102,241,0.12);
+            border-radius: 20px;
+            padding: 1.8rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .gc-ticker-left h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 0.3rem;
+        }
+        .gc-ticker-left p {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.35);
+            max-width: 360px;
+        }
+        .gc-ticker-stats {
+            display: flex;
+            gap: 2.5rem;
+            flex-shrink: 0;
+        }
+        .gc-ticker-stat { text-align: center; }
+        .gc-ticker-val {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            background: linear-gradient(135deg, #818cf8, #a855f7);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            line-height: 1;
+        }
+        .gc-ticker-lbl {
+            font-size: 0.68rem;
+            color: rgba(255,255,255,0.3);
+            margin-top: 0.3rem;
+            font-weight: 500;
+        }
+        .gc-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .gc-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,102,241,0.3); }
+
+        /* Skill tag colors per domain */
+        .tag-law { background: rgba(251,191,36,0.08); color: #fbbf24; border: 1px solid rgba(251,191,36,0.12); }
+        .tag-health { background: rgba(34,197,94,0.08); color: #4ade80; border: 1px solid rgba(34,197,94,0.12); }
+        .tag-hotel { background: rgba(249,115,22,0.08); color: #fb923c; border: 1px solid rgba(249,115,22,0.12); }
+        .tag-finance { background: rgba(99,102,241,0.1); color: #818cf8; border: 1px solid rgba(99,102,241,0.15); }
+        .tag-marketing { background: rgba(236,72,153,0.08); color: #f472b6; border: 1px solid rgba(236,72,153,0.12); }
+        .tag-immo { background: rgba(20,184,166,0.08); color: #2dd4bf; border: 1px solid rgba(20,184,166,0.12); }
+        .tag-rh { background: rgba(168,85,247,0.08); color: #c084fc; border: 1px solid rgba(168,85,247,0.12); }
+        .tag-retail { background: rgba(239,68,68,0.08); color: #f87171; border: 1px solid rgba(239,68,68,0.12); }
+    </style>
+
+    <section id="crew-builder">
+        <div class="reveal" style="text-align:center;">
+            <div class="section-label">Équipes Sectorielles</div>
+            <h2 class="section-title" style="margin:0 auto;">Votre équipe IA, <span class="gradient-text">selon votre métier.</span></h2>
+            <p class="section-desc" style="margin:1rem auto 0; max-width:560px;">Chaque secteur dispose d'une équipe d'agents IA entraînés sur les enjeux réels de votre industrie — prêts à se déployer en 48h.</p>
+            <div class="animated-line" style="margin:1.5rem auto 0;"></div>
         </div>
 
-        <div class="crew-builder reveal">
-            <div class="crew-groups-container" id="crewGroupsContainer"></div>
-            <div class="crew-result" id="crewResult">
-                <div class="crew-count-bar">
-                    <span class="count" id="crewCount">0</span>
-                    <span class="label">agents sélectionnés</span>
+        <!-- Domain Tabs -->
+        <div class="sector-tabs-wrap reveal">
+            <button class="sector-tab active" data-sector="droit"><span class="sector-tab-icon">⚖️</span> Droit & Juridique</button>
+            <button class="sector-tab" data-sector="sante"><span class="sector-tab-icon">🏥</span> Santé & Médical</button>
+            <button class="sector-tab" data-sector="hotel"><span class="sector-tab-icon">🏨</span> Hôtellerie & Conciergerie</button>
+            <button class="sector-tab" data-sector="finance"><span class="sector-tab-icon">📊</span> Finance & Banque</button>
+            <button class="sector-tab" data-sector="marketing"><span class="sector-tab-icon">📣</span> Marketing & Growth</button>
+            <button class="sector-tab" data-sector="immo"><span class="sector-tab-icon">🏗️</span> Immobilier</button>
+            <button class="sector-tab" data-sector="rh"><span class="sector-tab-icon">👥</span> RH & Recrutement</button>
+            <button class="sector-tab" data-sector="retail"><span class="sector-tab-icon">🛒</span> Retail & E-Commerce</button>
+        </div>
+
+        <div style="margin-top:2rem;" class="reveal">
+
+            <!-- ── DROIT ── -->
+            <div class="team-panel active" id="panel-droit">
+                <div class="vs-banner">
+                    <div class="vs-col traditional">
+                        <div class="vs-label">Cabinet juridique traditionnel</div>
+                        <div class="vs-value">12 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
+                        <div class="vs-sub">3 juristes + assistante + outils</div>
+                    </div>
+                    <div class="vs-center">
+                        <div class="vs-arrow-icon">→</div>
+                        <div class="vs-badge">−85% de coût</div>
+                    </div>
+                    <div class="vs-col nexus">
+                        <div class="vs-label">Équipe NexusAI — Droit</div>
+                        <div class="vs-value">Sur devis</div>
+                        <div class="vs-sub">7 agents spécialisés, disponibles 24/7</div>
+                    </div>
                 </div>
-                <div class="crew-result-plan" id="crewPlan">Sélectionnez vos agents</div>
-                <div class="crew-result-price" id="crewPrice">—</div>
-                <div class="crew-result-desc" id="crewDesc">Cliquez sur les agents ci-dessus pour composer votre écosystème.</div>
-                <a href="#tarifs" class="btn-primary magnetic-btn" id="crewCta" style="display:none;">Voir le plan recommandé →</a>
-                <a class="btn-primary magnetic-btn" id="crewOrderCta" style="display:none;margin-top:0.5rem;width:100%;justify-content:center;font-size:0.95rem;">Commander cet écosystème →</a>
+                <div class="team-grid">
+                    <div class="team-orchestrator-card">
+                        <div class="orch-label">● Orchestrateur</div>
+                        <div class="orch-avatar">AR</div>
+                        <div class="orch-name">ARTHUR</div>
+                        <div class="orch-role">Stratège Juridique<br><span class="orch-dot"></span>En ligne</div>
+                    </div>
+                    <div>
+                        <div class="agents-section-label">Équipe — 7 agents spécialisés</div>
+                        <div class="agents-grid">
+                            <div class="agent-card"><div class="agent-name">LEX</div><div class="agent-role">Analyse & revue de contrats</div><span class="agent-skill-tag tag-law">Contrats</span></div>
+                            <div class="agent-card"><div class="agent-name">CLAUSE</div><div class="agent-role">Rédaction de clauses sur-mesure</div><span class="agent-skill-tag tag-law">Rédaction</span></div>
+                            <div class="agent-card"><div class="agent-name">CONFORME</div><div class="agent-role">Veille réglementaire & RGPD</div><span class="agent-skill-tag tag-law">Compliance</span></div>
+                            <div class="agent-card"><div class="agent-name">DUE</div><div class="agent-role">Due diligence & audit légal</div><span class="agent-skill-tag tag-law">M&A</span></div>
+                            <div class="agent-card"><div class="agent-name">VERDICT</div><div class="agent-role">Jurisprudence & recherche cas</div><span class="agent-skill-tag tag-law">Recherche</span></div>
+                            <div class="agent-card"><div class="agent-name">NOTIF</div><div class="agent-role">Délais légaux & notifications</div><span class="agent-skill-tag tag-law">Alertes</span></div>
+                            <div class="agent-card"><div class="agent-name">LITIGE</div><div class="agent-role">Préparation dossiers litige</div><span class="agent-skill-tag tag-law">Contentieux</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── SANTÉ ── -->
+            <div class="team-panel" id="panel-sante">
+                <div class="vs-banner">
+                    <div class="vs-col traditional">
+                        <div class="vs-label">Équipe administrative classique</div>
+                        <div class="vs-value">9 500€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
+                        <div class="vs-sub">2 secrétaires médicales + logiciels</div>
+                    </div>
+                    <div class="vs-center">
+                        <div class="vs-arrow-icon">→</div>
+                        <div class="vs-badge">+1h30/jour/médecin</div>
+                    </div>
+                    <div class="vs-col nexus">
+                        <div class="vs-label">Équipe NexusAI — Santé</div>
+                        <div class="vs-value">Sur devis</div>
+                        <div class="vs-sub">7 agents disponibles 24/7, zéro erreur</div>
+                    </div>
+                </div>
+                <div class="team-grid">
+                    <div class="team-orchestrator-card">
+                        <div class="orch-label">● Orchestrateur</div>
+                        <div class="orch-avatar">HP</div>
+                        <div class="orch-name">HIPPO</div>
+                        <div class="orch-role">Coordinateur Médical<br><span class="orch-dot"></span>En ligne</div>
+                    </div>
+                    <div>
+                        <div class="agents-section-label">Équipe — 7 agents spécialisés</div>
+                        <div class="agents-grid">
+                            <div class="agent-card"><div class="agent-name">ANAMNESE</div><div class="agent-role">Triage & gestion dossiers patients</div><span class="agent-skill-tag tag-health">Dossiers</span></div>
+                            <div class="agent-card"><div class="agent-name">CODEX</div><div class="agent-role">Codification CCAM / CIM-10</div><span class="agent-skill-tag tag-health">Facturation</span></div>
+                            <div class="agent-card"><div class="agent-name">PHARMA</div><div class="agent-role">Interactions médicamenteuses</div><span class="agent-skill-tag tag-health">Sécurité</span></div>
+                            <div class="agent-card"><div class="agent-name">COMPTE-RENDU</div><div class="agent-role">Synthèse & dictée médicale IA</div><span class="agent-skill-tag tag-health">Rédaction</span></div>
+                            <div class="agent-card"><div class="agent-name">RDVMED</div><div class="agent-role">Planning & rappels patients</div><span class="agent-skill-tag tag-health">Agenda</span></div>
+                            <div class="agent-card"><div class="agent-name">TIERS</div><div class="agent-role">Tiers-payant & remboursements</div><span class="agent-skill-tag tag-health">CPAM</span></div>
+                            <div class="agent-card"><div class="agent-name">PROTOCO</div><div class="agent-role">Protocoles & recommandations HAS</div><span class="agent-skill-tag tag-health">Qualité</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── HÔTELLERIE ── -->
+            <div class="team-panel" id="panel-hotel">
+                <div class="vs-banner">
+                    <div class="vs-col traditional">
+                        <div class="vs-label">Équipe conciergerie & revenue classique</div>
+                        <div class="vs-value">15 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
+                        <div class="vs-sub">Revenue manager + concierge + guest relations</div>
+                    </div>
+                    <div class="vs-center">
+                        <div class="vs-arrow-icon">→</div>
+                        <div class="vs-badge">+23% RevPAR</div>
+                    </div>
+                    <div class="vs-col nexus">
+                        <div class="vs-label">Équipe NexusAI — Hôtellerie</div>
+                        <div class="vs-value">Sur devis</div>
+                        <div class="vs-sub">8 agents, gestion 24/7, zéro friction</div>
+                    </div>
+                </div>
+                <div class="team-grid">
+                    <div class="team-orchestrator-card">
+                        <div class="orch-label">● Orchestrateur</div>
+                        <div class="orch-avatar">BT</div>
+                        <div class="orch-name">BUTLER</div>
+                        <div class="orch-role">Directeur Expérience IA<br><span class="orch-dot"></span>En ligne</div>
+                    </div>
+                    <div>
+                        <div class="agents-section-label">Équipe — 8 agents spécialisés</div>
+                        <div class="agents-grid">
+                            <div class="agent-card"><div class="agent-name">REZA</div><div class="agent-role">Gestion des réservations & OTA</div><span class="agent-skill-tag tag-hotel">Booking</span></div>
+                            <div class="agent-card"><div class="agent-name">REVMAX</div><div class="agent-role">Revenue management & tarification</div><span class="agent-skill-tag tag-hotel">Yield</span></div>
+                            <div class="agent-card"><div class="agent-name">CONCIERGE</div><div class="agent-role">Recommandations & services clients</div><span class="agent-skill-tag tag-hotel">Guest XP</span></div>
+                            <div class="agent-card"><div class="agent-name">REVIEW</div><div class="agent-role">Réputation & réponses avis</div><span class="agent-skill-tag tag-hotel">E-rép</span></div>
+                            <div class="agent-card"><div class="agent-name">CHEF</div><div class="agent-role">F&B, menus & allergènes</div><span class="agent-skill-tag tag-hotel">Restauration</span></div>
+                            <div class="agent-card"><div class="agent-name">HOUSEKEEP</div><div class="agent-role">Planning équipes & chambres</div><span class="agent-skill-tag tag-hotel">Opérations</span></div>
+                            <div class="agent-card"><div class="agent-name">UPSELL</div><div class="agent-role">Cross-sell & upgrades automatiques</div><span class="agent-skill-tag tag-hotel">Revenue</span></div>
+                            <div class="agent-card"><div class="agent-name">LOYALTY</div><div class="agent-role">Programme fidélité & CRM</div><span class="agent-skill-tag tag-hotel">Fidélisation</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── FINANCE ── -->
+            <div class="team-panel" id="panel-finance">
+                <div class="vs-banner">
+                    <div class="vs-col traditional">
+                        <div class="vs-label">Équipe conformité & reporting classique</div>
+                        <div class="vs-value">18 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
+                        <div class="vs-sub">Compliance officer + analyste risque + outils</div>
+                    </div>
+                    <div class="vs-center">
+                        <div class="vs-arrow-icon">→</div>
+                        <div class="vs-badge">−90% erreurs</div>
+                    </div>
+                    <div class="vs-col nexus">
+                        <div class="vs-label">Équipe NexusAI — Finance</div>
+                        <div class="vs-value">Sur devis</div>
+                        <div class="vs-sub">7 agents, surveillance temps réel, SLA 99.9%</div>
+                    </div>
+                </div>
+                <div class="team-grid">
+                    <div class="team-orchestrator-card">
+                        <div class="orch-label">● Orchestrateur</div>
+                        <div class="orch-avatar">SG</div>
+                        <div class="orch-name">SIGMA</div>
+                        <div class="orch-role">Stratège Financier IA<br><span class="orch-dot"></span>En ligne</div>
+                    </div>
+                    <div>
+                        <div class="agents-section-label">Équipe — 7 agents spécialisés</div>
+                        <div class="agents-grid">
+                            <div class="agent-card"><div class="agent-name">COMPLY</div><div class="agent-role">Conformité KYC / AML / MIF2</div><span class="agent-skill-tag tag-finance">Compliance</span></div>
+                            <div class="agent-card"><div class="agent-name">REPORT</div><div class="agent-role">Reporting réglementaire automatisé</div><span class="agent-skill-tag tag-finance">Reporting</span></div>
+                            <div class="agent-card"><div class="agent-name">RISK</div><div class="agent-role">Scoring & analyse de risques</div><span class="agent-skill-tag tag-finance">Risk Mgmt</span></div>
+                            <div class="agent-card"><div class="agent-name">ALPHA</div><div class="agent-role">Analyse de portefeuille & marchés</div><span class="agent-skill-tag tag-finance">Analyse</span></div>
+                            <div class="agent-card"><div class="agent-name">LEDGER</div><div class="agent-role">Comptabilité & rapprochement bancaire</div><span class="agent-skill-tag tag-finance">Compta</span></div>
+                            <div class="agent-card"><div class="agent-name">ALERT</div><div class="agent-role">Détection anomalies & fraudes</div><span class="agent-skill-tag tag-finance">Fraude</span></div>
+                            <div class="agent-card"><div class="agent-name">FORECAST</div><div class="agent-role">Prévision trésorerie & budget</div><span class="agent-skill-tag tag-finance">Forecast</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── MARKETING ── -->
+            <div class="team-panel" id="panel-marketing">
+                <div class="vs-banner">
+                    <div class="vs-col traditional">
+                        <div class="vs-label">Agence marketing + freelances</div>
+                        <div class="vs-value">8 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
+                        <div class="vs-sub">Chef de projet + rédacteur + growth hacker</div>
+                    </div>
+                    <div class="vs-center">
+                        <div class="vs-arrow-icon">→</div>
+                        <div class="vs-badge">×4 contenu</div>
+                    </div>
+                    <div class="vs-col nexus">
+                        <div class="vs-label">Équipe NexusAI — Marketing</div>
+                        <div class="vs-value">Sur devis</div>
+                        <div class="vs-sub">7 agents, production continue, A/B testing IA</div>
+                    </div>
+                </div>
+                <div class="team-grid">
+                    <div class="team-orchestrator-card">
+                        <div class="orch-label">● Orchestrateur</div>
+                        <div class="orch-avatar">SP</div>
+                        <div class="orch-name">SPARK</div>
+                        <div class="orch-role">Stratège Growth IA<br><span class="orch-dot"></span>En ligne</div>
+                    </div>
+                    <div>
+                        <div class="agents-section-label">Équipe — 7 agents spécialisés</div>
+                        <div class="agents-grid">
+                            <div class="agent-card"><div class="agent-name">CONTENT</div><div class="agent-role">Création contenu & copywriting</div><span class="agent-skill-tag tag-marketing">Contenu</span></div>
+                            <div class="agent-card"><div class="agent-name">SERAPH</div><div class="agent-role">SEO & optimisation sémantique</div><span class="agent-skill-tag tag-marketing">SEO</span></div>
+                            <div class="agent-card"><div class="agent-name">ADS</div><div class="agent-role">Gestion campagnes Meta / Google</div><span class="agent-skill-tag tag-marketing">Paid Ads</span></div>
+                            <div class="agent-card"><div class="agent-name">SOCIAL</div><div class="agent-role">Scheduling & community management</div><span class="agent-skill-tag tag-marketing">Social</span></div>
+                            <div class="agent-card"><div class="agent-name">INSIGHT</div><div class="agent-role">Analyse data & tableaux de bord</div><span class="agent-skill-tag tag-marketing">Analytics</span></div>
+                            <div class="agent-card"><div class="agent-name">DRIP</div><div class="agent-role">Email & automation marketing</div><span class="agent-skill-tag tag-marketing">Email</span></div>
+                            <div class="agent-card"><div class="agent-name">LEAD</div><div class="agent-role">Scoring leads & nurturing CRM</div><span class="agent-skill-tag tag-marketing">CRM</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── IMMOBILIER ── -->
+            <div class="team-panel" id="panel-immo">
+                <div class="vs-banner">
+                    <div class="vs-col traditional">
+                        <div class="vs-label">Équipe commerciale & gestion classique</div>
+                        <div class="vs-value">11 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
+                        <div class="vs-sub">2 agents immo + gestionnaire locatif</div>
+                    </div>
+                    <div class="vs-center">
+                        <div class="vs-arrow-icon">→</div>
+                        <div class="vs-badge">+40% mandats</div>
+                    </div>
+                    <div class="vs-col nexus">
+                        <div class="vs-label">Équipe NexusAI — Immobilier</div>
+                        <div class="vs-value">Sur devis</div>
+                        <div class="vs-sub">6 agents, qualification leads 24/7</div>
+                    </div>
+                </div>
+                <div class="team-grid">
+                    <div class="team-orchestrator-card">
+                        <div class="orch-label">● Orchestrateur</div>
+                        <div class="orch-avatar">AT</div>
+                        <div class="orch-name">ATLAS</div>
+                        <div class="orch-role">Directeur Commercial IA<br><span class="orch-dot"></span>En ligne</div>
+                    </div>
+                    <div>
+                        <div class="agents-section-label">Équipe — 6 agents spécialisés</div>
+                        <div class="agents-grid">
+                            <div class="agent-card"><div class="agent-name">SCOUT</div><div class="agent-role">Sourcing & qualification leads</div><span class="agent-skill-tag tag-immo">Prospection</span></div>
+                            <div class="agent-card"><div class="agent-name">ESTIM</div><div class="agent-role">Estimation automatique de biens</div><span class="agent-skill-tag tag-immo">Estimation</span></div>
+                            <div class="agent-card"><div class="agent-name">DOCIMO</div><div class="agent-role">Gestion documentaire & signature</div><span class="agent-skill-tag tag-immo">Juridique</span></div>
+                            <div class="agent-card"><div class="agent-name">VISIT</div><div class="agent-role">Planification & suivi visites</div><span class="agent-skill-tag tag-immo">Agenda</span></div>
+                            <div class="agent-card"><div class="agent-name">RENTAL</div><div class="agent-role">Gestion locative & quittances</div><span class="agent-skill-tag tag-immo">Gestion</span></div>
+                            <div class="agent-card"><div class="agent-name">COMPLY-IMM</div><div class="agent-role">Conformité & diagnostics réglementaires</div><span class="agent-skill-tag tag-immo">DPE / Loi</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── RH ── -->
+            <div class="team-panel" id="panel-rh">
+                <div class="vs-banner">
+                    <div class="vs-col traditional">
+                        <div class="vs-label">Cabinet RH & recrutement classique</div>
+                        <div class="vs-value">10 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
+                        <div class="vs-sub">RRH + chargé recrutement + paie externalisée</div>
+                    </div>
+                    <div class="vs-center">
+                        <div class="vs-arrow-icon">→</div>
+                        <div class="vs-badge">−60% time-to-hire</div>
+                    </div>
+                    <div class="vs-col nexus">
+                        <div class="vs-label">Équipe NexusAI — RH</div>
+                        <div class="vs-value">Sur devis</div>
+                        <div class="vs-sub">6 agents, onboarding automatisé, 0 oubli</div>
+                    </div>
+                </div>
+                <div class="team-grid">
+                    <div class="team-orchestrator-card">
+                        <div class="orch-label">● Orchestrateur</div>
+                        <div class="orch-avatar">HL</div>
+                        <div class="orch-name">HELIA</div>
+                        <div class="orch-role">DRH Augmenté<br><span class="orch-dot"></span>En ligne</div>
+                    </div>
+                    <div>
+                        <div class="agents-section-label">Équipe — 6 agents spécialisés</div>
+                        <div class="agents-grid">
+                            <div class="agent-card"><div class="agent-name">SORTER</div><div class="agent-role">Tri CV & pré-qualification candidats</div><span class="agent-skill-tag tag-rh">Recrutement</span></div>
+                            <div class="agent-card"><div class="agent-name">ONBOARD</div><div class="agent-role">Intégration & checklist nouveaux</div><span class="agent-skill-tag tag-rh">Onboarding</span></div>
+                            <div class="agent-card"><div class="agent-name">PAIE</div><div class="agent-role">Calcul paie, charges & bulletins</div><span class="agent-skill-tag tag-rh">Paie</span></div>
+                            <div class="agent-card"><div class="agent-name">TALENT</div><div class="agent-role">Détection talents & mobilité interne</div><span class="agent-skill-tag tag-rh">Talents</span></div>
+                            <div class="agent-card"><div class="agent-name">FORM</div><div class="agent-role">Plans de formation & CPF</div><span class="agent-skill-tag tag-rh">Formation</span></div>
+                            <div class="agent-card"><div class="agent-name">WELLBEING</div><div class="agent-role">Engagement & satisfaction RH</div><span class="agent-skill-tag tag-rh">Culture</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── RETAIL ── -->
+            <div class="team-panel" id="panel-retail">
+                <div class="vs-banner">
+                    <div class="vs-col traditional">
+                        <div class="vs-label">Équipe e-commerce & SAV classique</div>
+                        <div class="vs-value">7 500€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
+                        <div class="vs-sub">Gestionnaire catalogue + SAV + logistique</div>
+                    </div>
+                    <div class="vs-center">
+                        <div class="vs-arrow-icon">→</div>
+                        <div class="vs-badge">+35% conversion</div>
+                    </div>
+                    <div class="vs-col nexus">
+                        <div class="vs-label">Équipe NexusAI — Retail</div>
+                        <div class="vs-value">Sur devis</div>
+                        <div class="vs-sub">6 agents, pricing dynamique, SAV 24/7</div>
+                    </div>
+                </div>
+                <div class="team-grid">
+                    <div class="team-orchestrator-card">
+                        <div class="orch-label">● Orchestrateur</div>
+                        <div class="orch-avatar">NX</div>
+                        <div class="orch-name">NEXO</div>
+                        <div class="orch-role">Directeur Retail IA<br><span class="orch-dot"></span>En ligne</div>
+                    </div>
+                    <div>
+                        <div class="agents-section-label">Équipe — 6 agents spécialisés</div>
+                        <div class="agents-grid">
+                            <div class="agent-card"><div class="agent-name">CATALOG</div><div class="agent-role">Gestion & enrichissement catalogue</div><span class="agent-skill-tag tag-retail">Catalogue</span></div>
+                            <div class="agent-card"><div class="agent-name">PRICER</div><div class="agent-role">Pricing dynamique & concurrentiel</div><span class="agent-skill-tag tag-retail">Pricing</span></div>
+                            <div class="agent-card"><div class="agent-name">SAV</div><div class="agent-role">Service client automatisé</div><span class="agent-skill-tag tag-retail">Support</span></div>
+                            <div class="agent-card"><div class="agent-name">STOCK</div><div class="agent-role">Gestion stocks & réapprovisionnement</div><span class="agent-skill-tag tag-retail">Logistique</span></div>
+                            <div class="agent-card"><div class="agent-name">CROSS</div><div class="agent-role">Cross-sell & recommandations produit</div><span class="agent-skill-tag tag-retail">Conversion</span></div>
+                            <div class="agent-card"><div class="agent-name">RETURN</div><div class="agent-role">Gestion retours & litiges</div><span class="agent-skill-tag tag-retail">Après-vente</span></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- GAME CHANGER: Pitch deck executives -->
+        <div class="gc-ticker reveal">
+            <div class="gc-ticker-left">
+                <h4>Ce que voit un DAF ou un DG en 30 secondes</h4>
+                <p>Ces chiffres représentent l'équivalent annualisé du coût évité en remplaçant des ressources traditionnelles par une équipe NexusAI — calculé sur la base de nos déploiements réels.</p>
+            </div>
+            <div class="gc-ticker-stats">
+                <div class="gc-ticker-stat">
+                    <div class="gc-ticker-val" id="gcSaved">0</div>
+                    <div class="gc-ticker-lbl">€ économisés / an (moy.)</div>
+                </div>
+                <div class="gc-ticker-stat">
+                    <div class="gc-ticker-val" id="gcHours">0</div>
+                    <div class="gc-ticker-lbl">heures récupérées / mois</div>
+                </div>
+                <div class="gc-ticker-stat">
+                    <div class="gc-ticker-val" id="gcDeploy">48h</div>
+                    <div class="gc-ticker-lbl">délai de déploiement</div>
+                </div>
+            </div>
+            <a href="#" class="gc-cta" onclick="openCalendly(); return false;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Déployer mon équipe →
+            </a>
+        </div>
+
+        <script>
+        // Sector tab switching
+        document.querySelectorAll('.sector-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.sector-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.team-panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                const panel = document.getElementById('panel-' + tab.dataset.sector);
+                if (panel) { panel.classList.add('active'); }
+            });
+        });
+
+        // Animated counters for game changer
+        function animateCounter(el, target, suffix, duration) {
+            let start = 0;
+            const step = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += step;
+                if (start >= target) { start = target; clearInterval(timer); }
+                el.textContent = Math.floor(start).toLocaleString('fr-FR') + suffix;
+            }, 16);
+        }
+
+        const gcObserver = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    animateCounter(document.getElementById('gcSaved'), 127000, '€', 1800);
+                    animateCounter(document.getElementById('gcHours'), 340, 'h', 1400);
+                    gcObserver.disconnect();
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const gcEl = document.querySelector('.gc-ticker');
+        if (gcEl) gcObserver.observe(gcEl);
+        </script>
     </section>
 
     <!-- Pricing -->
