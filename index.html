@@ -48,6 +48,7 @@
         html {
             scroll-behavior: smooth;
             overflow-x: hidden;
+            background: var(--bg);
         }
 
         body {
@@ -4038,6 +4039,94 @@
         }
         body.mode-pro .scroll-depth-indicator { display: none; }
         @media (max-width: 768px) { .scroll-depth-indicator { display: none; } }
+
+        /* ── Hero Proof Strip ── */
+        .hero-proof-strip {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            max-width: 900px;
+            margin: 0 auto 0;
+            padding: 1.4rem 2rem;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+        .hero-proof-quote {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            flex: 1;
+            min-width: 240px;
+        }
+        .hero-proof-avatar {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; font-weight: 800; color: white;
+            flex-shrink: 0;
+        }
+        .hero-proof-text {
+            font-size: 0.82rem;
+            color: var(--text);
+            font-style: italic;
+            line-height: 1.5;
+            margin-bottom: 0.3rem;
+        }
+        .hero-proof-author {
+            font-size: 0.68rem;
+            color: var(--text-secondary);
+        }
+        .hero-proof-divider {
+            width: 1px; height: 40px;
+            background: rgba(255,255,255,0.08);
+            flex-shrink: 0;
+        }
+        .hero-proof-metric {
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .hero-proof-num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: #22c55e;
+            line-height: 1;
+        }
+        .hero-proof-lbl {
+            font-size: 0.62rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+            white-space: nowrap;
+        }
+        @media (max-width: 640px) {
+            .hero-proof-strip { gap: 1.2rem; padding: 1.2rem 1.4rem; }
+            .hero-proof-divider { display: none; }
+        }
+
+        /* ── Tariff clarity line ── */
+        .tariff-clarity {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            margin-top: 1.5rem;
+            padding: 0.6rem 1.2rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 100px;
+            max-width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .tariff-clarity svg { opacity: 0.4; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -4177,19 +4266,47 @@
     <section class="hero">
         <div class="hero-badge">
             <span class="badge-dot"></span>
-            Écosystèmes IA — Nouvelle Génération
+            Pour les dirigeants de PME qui veulent passer à l'IA sans friction
         </div>
         <h1 class="hero-title" id="heroTitle">
             <span class="title-line" data-line="0">On déploie des</span>
             <span class="title-line" data-line="1">agents IA qui</span>
-            <span class="title-line gradient-text" data-line="2">automatisent vos processus métier — en 24h, clé en main.</span>
+            <span class="title-line gradient-text" data-line="2">travaillent à votre place — en 24h, clé en main.</span>
         </h1>
-        <p class="hero-subtitle" id="heroSubtitle">Emails, comptabilité, support client, analyse de données — vos agents bossent 24h/24 pendant que vous vous concentrez sur ce qui compte.</p>
+        <p class="hero-subtitle" id="heroSubtitle">Vos équipes perdent en moyenne 40 % de leur temps sur des tâches répétitives. Nos agents s'en chargent en autonomie — vous récupérez du temps, vos clients voient la différence.</p>
         <div class="hero-buttons">
-            <a href="#tarifs" class="btn-primary magnetic-btn">Démarrer mon écosystème →</a>
+            <a href="#tarifs" class="btn-primary magnetic-btn">Mesurer mon potentiel →</a>
             <a href="#domaines" class="btn-secondary magnetic-btn">Explorer les domaines</a>
         </div>
     </section>
+
+    <!-- Social proof immédiate sous hero -->
+    <div style="padding: 0 2rem 3rem; position: relative; z-index: 2;">
+        <div class="hero-proof-strip">
+            <div class="hero-proof-quote">
+                <div class="hero-proof-avatar">SL</div>
+                <div>
+                    <blockquote class="hero-proof-text">"Délais divisés par 4, 22 heures récupérées par semaine dès le deuxième mois."</blockquote>
+                    <div class="hero-proof-author">Sophie L. — Directrice Innovation, Cabinet financier · Paris</div>
+                </div>
+            </div>
+            <div class="hero-proof-divider"></div>
+            <div class="hero-proof-metric">
+                <div class="hero-proof-num">×4</div>
+                <div class="hero-proof-lbl">délais réduits</div>
+            </div>
+            <div class="hero-proof-divider"></div>
+            <div class="hero-proof-metric">
+                <div class="hero-proof-num">22h</div>
+                <div class="hero-proof-lbl">/ semaine récupérées</div>
+            </div>
+            <div class="hero-proof-divider"></div>
+            <div class="hero-proof-metric">
+                <div class="hero-proof-num">2 mois</div>
+                <div class="hero-proof-lbl">pour voir les résultats</div>
+            </div>
+        </div>
+    </div>
 
     <!-- Marquee -->
     <div class="marquee-section">
@@ -5661,6 +5778,10 @@
             <div class="section-label">Solutions Enterprise</div>
             <h2 class="section-title" style="margin: 0 auto;">Une architecture IA<br><span class="gradient-text">taillée pour vous.</span></h2>
             <p class="section-desc" style="margin: 1.2rem auto 0; max-width: 520px;">Chaque transformation est unique. Nos architectes IA conçoivent une solution entièrement adaptée à vos enjeux, votre secteur et votre échelle.</p>
+            <div class="tariff-clarity">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                Les agents tournent en autonomie dans votre infrastructure — l'accompagnement mensuel couvre les évolutions, la maintenance et le support dédié.
+            </div>
             <div class="animated-line" style="margin: 1.5rem auto 0;"></div>
         </div>
 
@@ -7302,11 +7423,12 @@
             const subtitle = document.getElementById('heroSubtitle');
             const words = subtitle.textContent.trim().split(/\s+/);
             subtitle.textContent = '';
-            words.forEach(word => {
+            words.forEach((word, i) => {
                 const span = document.createElement('span');
                 span.className = 'word';
-                span.textContent = word + ' ';
+                span.textContent = word;
                 subtitle.appendChild(span);
+                if (i < words.length - 1) subtitle.appendChild(document.createTextNode('\u00A0'));
             });
 
             // Fast sequential reveal — CTA visible in <0.5s
