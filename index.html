@@ -1303,6 +1303,24 @@
             font-size: 0.9rem;
         }
 
+        .author-avatar-photo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(99,102,241,0.3);
+            flex-shrink: 0;
+        }
+
+        .testi-company-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
         .author-info strong {
             display: block;
             font-size: 0.9rem;
@@ -4203,8 +4221,7 @@
                         <span class="dd-icon" style="background:rgba(99,102,241,0.08);">
                             <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
                         </span>
-                        <span class="dd-text"><span class="dd-label">Plans & Prix</span><span class="dd-desc">3 formules — offre de lancement</span></span>
-                        <span class="dd-badge" style="background:rgba(239,68,68,0.08);color:#ef4444;">PROMO</span>
+                        <span class="dd-text"><span class="dd-label">Plans & Prix</span><span class="dd-desc">3 formules — tarifs transparents</span></span>
                     </a>
                     <a href="#roi">
                         <span class="dd-icon" style="background:rgba(34,197,94,0.08);">
@@ -4270,8 +4287,10 @@
         </h1>
         <p class="hero-subtitle" id="heroSubtitle">Vos équipes perdent en moyenne 40 % de leur temps sur des tâches répétitives. Nos agents s'en chargent en autonomie — vous récupérez du temps, vos clients voient la différence.</p>
         <div class="hero-buttons">
-            <a href="#tarifs" class="btn-primary magnetic-btn">Mesurer mon potentiel →</a>
-            <a href="#domaines" class="btn-secondary magnetic-btn">Explorer les domaines</a>
+            <a href="javascript:void(0)" onclick="openCalendly()" class="btn-primary magnetic-btn">Prendre un appel gratuit →</a>
+        </div>
+        <div style="text-align:center;margin-top:1rem;">
+            <a href="#domaines" style="color:var(--text-secondary);font-size:0.85rem;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:1px;transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-secondary)'">Explorer les domaines ↓</a>
         </div>
     </section>
 
@@ -4279,10 +4298,10 @@
     <div style="padding: 0 2rem 3rem; position: relative; z-index: 2;">
         <div class="hero-proof-strip">
             <div class="hero-proof-quote">
-                <div class="hero-proof-avatar">SL</div>
+                <img src="https://i.pravatar.cc/48?img=53" alt="Nicolas F." style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid rgba(99,102,241,0.3);flex-shrink:0;">
                 <div>
-                    <blockquote class="hero-proof-text">"Délais divisés par 4, 22 heures récupérées par semaine dès le deuxième mois."</blockquote>
-                    <div class="hero-proof-author">Sophie L. — Directrice Innovation, Cabinet financier · Paris</div>
+                    <blockquote class="hero-proof-text">"2 mandats de plus en 3 mois — juste parce qu'on répondait plus vite que les concurrents."</blockquote>
+                    <div class="hero-proof-author">Nicolas F. — Directeur, Immo Voisins · Voisins-le-Bretonneux</div>
                 </div>
             </div>
             <div class="hero-proof-divider"></div>
@@ -4410,69 +4429,6 @@
         </div>
     </section>
 
-    <!-- Ecosystem Configurator -->
-    <section class="configurator-section" id="configurateur">
-        <div class="reveal">
-            <div class="section-label">Configurateur — Simulation en temps réel</div>
-            <h2 class="section-title">Visualisez votre écosystème.</h2>
-            <p class="section-desc">Sélectionnez votre domaine et voyez les agents IA se déployer en temps réel.
-                <span class="help-tooltip" data-help="config">
-                    <span class="help-icon">?</span> Comment ça marche ?
-                    <div class="help-popup">
-                        <div class="help-popup-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Comment fonctionne le configurateur ?</div>
-                        <div class="help-popup-text">Cliquez sur un <strong>domaine métier</strong> à gauche. Le configurateur affiche automatiquement les agents IA adaptés, le nombre d'agents nécessaires, le ROI estimé et le délai de déploiement. C'est une <strong>simulation en temps réel</strong> de votre futur écosystème.</div>
-                        <a href="#crew-builder" class="help-popup-cta">Composer mon équipe →</a>
-                    </div>
-                </span>
-            </p>
-            <div class="animated-line"></div>
-        </div>
-
-        <div class="config-layout reveal">
-            <div class="config-domains" id="configDomains">
-                <button class="config-domain-btn active" data-domain="sante">
-                    <span class="btn-icon">🏥</span> Santé & Médical
-                </button>
-                <button class="config-domain-btn" data-domain="finance">
-                    <span class="btn-icon">💰</span> Finance & Assurance
-                </button>
-                <button class="config-domain-btn" data-domain="ecommerce">
-                    <span class="btn-icon">🛒</span> E-Commerce & Retail
-                </button>
-                <button class="config-domain-btn" data-domain="education">
-                    <span class="btn-icon">🎓</span> Éducation & Formation
-                </button>
-                <button class="config-domain-btn" data-domain="immobilier">
-                    <span class="btn-icon">🏗️</span> Immobilier
-                </button>
-                <button class="config-domain-btn" data-domain="juridique">
-                    <span class="btn-icon">⚖️</span> Juridique
-                </button>
-            </div>
-
-            <div class="config-preview" id="configPreview">
-                <div class="config-preview-header">
-                    <div class="config-preview-title" id="configTitle">Santé & Médical</div>
-                    <div class="config-stats">
-                        <div class="config-stat">
-                            <div class="config-stat-value" id="configAgentCount">12</div>
-                            <div class="config-stat-label">Agents</div>
-                        </div>
-                        <div class="config-stat">
-                            <div class="config-stat-value" id="configROI">+67%</div>
-                            <div class="config-stat-label">ROI moyen</div>
-                        </div>
-                        <div class="config-stat">
-                            <div class="config-stat-value" id="configDeployTime">6 sem.</div>
-                            <div class="config-stat-label">Déploiement</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="config-agents-grid" id="configAgents"></div>
-            </div>
-        </div>
-
-    </section>
 
     <!-- Stats Section -->
     <div class="stats-section reveal" id="statsSection">
@@ -4510,100 +4466,6 @@
         </div>
     </div>
 
-    <!-- Tech Stack Orbit -->
-    <section class="orbit-section" id="stack">
-        <div class="reveal">
-            <div class="section-label">Stack Technique</div>
-            <h2 class="section-title" style="margin: 0 auto;">La puissance sous le capot.</h2>
-            <p class="section-desc" style="margin: 1rem auto 0;">Chaque écosystème s'appuie sur les technologies les plus avancées du marché, orchestrées en symbiose.</p>
-            <div class="animated-line" style="margin: 1.5rem auto 0;"></div>
-        </div>
-
-        <div class="stack-dual-layout reveal">
-        <div class="orbit-container">
-            <!-- Center -->
-            <div class="orbit-center">NEXUS<br>AI</div>
-
-            <!-- Ring 1 — inner (4 items) -->
-            <div class="orbit-ring">
-                <div class="orbit-item" style="top: -28px; left: 50%; margin-left: -28px;">
-                    LLM
-                    <span class="orbit-tooltip">Large Language Models — GPT, Claude, Mistral</span>
-                </div>
-                <div class="orbit-item" style="bottom: -28px; left: 50%; margin-left: -28px;">
-                    RAG
-                    <span class="orbit-tooltip">Retrieval Augmented Generation</span>
-                </div>
-                <div class="orbit-item" style="top: 50%; left: -28px; margin-top: -28px;">
-                    NLP
-                    <span class="orbit-tooltip">Natural Language Processing</span>
-                </div>
-                <div class="orbit-item" style="top: 50%; right: -28px; margin-top: -28px;">
-                    CV
-                    <span class="orbit-tooltip">Computer Vision — YOLO, SAM</span>
-                </div>
-            </div>
-
-            <!-- Ring 2 — middle (4 items) -->
-            <div class="orbit-ring">
-                <div class="orbit-item" style="top: -28px; left: 50%; margin-left: -28px;">
-                    Vec DB
-                    <span class="orbit-tooltip">Pinecone, Weaviate, Chroma</span>
-                </div>
-                <div class="orbit-item" style="bottom: -28px; left: 50%; margin-left: -28px;">
-                    API
-                    <span class="orbit-tooltip">REST & GraphQL Endpoints</span>
-                </div>
-                <div class="orbit-item" style="top: 50%; left: -28px; margin-top: -28px;">
-                    ETL
-                    <span class="orbit-tooltip">Extract, Transform, Load Pipelines</span>
-                </div>
-                <div class="orbit-item" style="top: 50%; right: -28px; margin-top: -28px;">
-                    ML
-                    <span class="orbit-tooltip">Machine Learning — PyTorch, TensorFlow</span>
-                </div>
-            </div>
-
-            <!-- Ring 3 — outer (4 items) -->
-            <div class="orbit-ring">
-                <div class="orbit-item" style="top: -28px; left: 50%; margin-left: -28px;">
-                    K8s
-                    <span class="orbit-tooltip">Kubernetes — Orchestration Cloud</span>
-                </div>
-                <div class="orbit-item" style="bottom: -28px; left: 50%; margin-left: -28px;">
-                    OCR
-                    <span class="orbit-tooltip">Reconnaissance Optique de Caractères</span>
-                </div>
-                <div class="orbit-item" style="top: 50%; left: -28px; margin-top: -28px;">
-                    TTS
-                    <span class="orbit-tooltip">Text-to-Speech & Speech-to-Text</span>
-                </div>
-                <div class="orbit-item" style="top: 50%; right: -28px; margin-top: -28px;">
-                    Auto
-                    <span class="orbit-tooltip">Agents Autonomes — AutoGPT, CrewAI</span>
-                </div>
-            </div>
-        </div>
-        <div class="stack-neural-preview">
-            <div class="stack-neural-label">Réseau en temps réel</div>
-            <div id="neural-canvas"></div>
-            <div class="stack-neural-stats">
-                <div class="stack-neural-stat">
-                    <div class="stack-neural-stat-val">12</div>
-                    <div class="stack-neural-stat-label">Nodes</div>
-                </div>
-                <div class="stack-neural-stat">
-                    <div class="stack-neural-stat-val">48</div>
-                    <div class="stack-neural-stat-label">Connexions</div>
-                </div>
-                <div class="stack-neural-stat">
-                    <div class="stack-neural-stat-val">99.7%</div>
-                    <div class="stack-neural-stat-label">Uptime</div>
-                </div>
-            </div>
-        </div>
-        </div>
-    </section>
 
     <!-- ──────────────── LIVE DEMO ──────────────── -->
     <section id="demo" style="padding: 6rem 2rem; position: relative; z-index: 2;">
@@ -5271,58 +5133,58 @@
 
         <div class="testimonials-track-wrapper" id="testimonialsWrapper">
             <div class="testimonials-track" id="testimonialsTrack">
-                <!-- Card 1 — Sophie L. -->
+                <!-- Card 1 — Dr Karim B. — Cabinet médical 77 -->
                 <div class="testimonial-card">
                     <div class="testimonial-content">
                         <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <blockquote>&#171; Franchement j'étais dubitative au départ. On a testé sur le traitement des dossiers clients. En 3 semaines le délai est passé de 48h à 11h. Les agents font les tâches répétitives, mes équipes font le reste. On a reconduit pour 6 mois. &#187;</blockquote>
+                        <blockquote>&#171; On passait 2h par jour sur les comptes-rendus et la saisie. Depuis 6 semaines un agent s'en charge la nuit. Le matin tout est dans le dossier patient. On a récupéré 1h30 par médecin, par jour. &#187;</blockquote>
                         <div class="testimonial-author">
-                            <div class="author-avatar">SL</div>
+                            <img class="author-avatar-photo" src="https://i.pravatar.cc/64?img=12" alt="Dr Karim B." loading="lazy">
                             <div class="author-info">
-                                <strong>Sophie L.</strong>
-                                <span>Directrice Innovation, Cabinet financier Paris</span>
+                                <strong>Dr Karim B.</strong>
+                                <span>Médecin associé — <span class="testi-company-badge" style="background:rgba(16,185,129,0.1);color:#10b981;">Cabinet des Marronniers · Pontault-Combault 77</span></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Card 2 — Dr Marc R. -->
+                <!-- Card 2 — Isabelle V. — Restaurant Meaux 77 -->
                 <div class="testimonial-card">
                     <div class="testimonial-content">
                         <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <blockquote>&#171; On a commencé par un seul agent sur l'analyse de comptes-rendus. Le gain de temps était suffisamment clair pour qu'on passe à 3 agents deux mois après. Les médecins récupèrent environ 1h30 par jour. &#187;</blockquote>
+                        <blockquote>&#171; Les réservations, les réponses aux avis Google, les relances fournisseurs — tout ça c'était moi avant. Maintenant ça se fait tout seul. Je dors enfin le dimanche soir. &#187;</blockquote>
                         <div class="testimonial-author">
-                            <div class="author-avatar">MR</div>
+                            <img class="author-avatar-photo" src="https://i.pravatar.cc/64?img=47" alt="Isabelle V." loading="lazy">
                             <div class="author-info">
-                                <strong>Dr Marc R.</strong>
-                                <span>Directeur, Clinique privée Lyon</span>
+                                <strong>Isabelle V.</strong>
+                                <span>Gérante — <span class="testi-company-badge" style="background:rgba(245,158,11,0.1);color:#f59e0b;">L'Ardoise Bistrot · Meaux 77</span></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Card 3 — Julien D. -->
+                <!-- Card 3 — Nicolas F. — Agence immo Yvelines -->
                 <div class="testimonial-card">
                     <div class="testimonial-content">
                         <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <blockquote>&#171; J'ai pris le plan Créateur pour tester. 3 agents sur mes emails, mes relances et ma facturation. Ça tourne depuis 4 mois sans que j'y touche. Pour ce que ça coûte c'est franchement imbattable. &#187;</blockquote>
+                        <blockquote>&#171; Les annonces, les relances acquéreurs, les comptes-rendus de visite — c'est 4h de boulot par agent par semaine qu'on ne fait plus. En 3 mois on a signé 2 mandats supplémentaires juste parce qu'on était plus réactifs. &#187;</blockquote>
                         <div class="testimonial-author">
-                            <div class="author-avatar">JD</div>
+                            <img class="author-avatar-photo" src="https://i.pravatar.cc/64?img=53" alt="Nicolas F." loading="lazy">
                             <div class="author-info">
-                                <strong>Julien D.</strong>
-                                <span>Fondateur, Agence digitale Bordeaux</span>
+                                <strong>Nicolas F.</strong>
+                                <span>Directeur — <span class="testi-company-badge" style="background:rgba(99,102,241,0.1);color:#818cf8;">Immo Voisins · Voisins-le-Bretonneux 78</span></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- Card 4 — Thomas C. -->
+                <!-- Card 4 — Sébastien M. — Transport Melun -->
                 <div class="testimonial-card">
                     <div class="testimonial-content">
                         <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div>
-                        <blockquote>&#171; On était à 120 tickets support par jour avec 4 personnes. Maintenant les agents gèrent les 80% de tickets répétitifs. L'équipe se concentre sur les cas complexes. C'était le bon moment pour le faire. &#187;</blockquote>
+                        <blockquote>&#171; Coordination des tournées, suivi des livraisons, reporting client — on gérait ça à la main avec des tableaux Excel. L'agent a absorbé tout ça en une semaine. 0 formation, 0 bug depuis 4 mois. &#187;</blockquote>
                         <div class="testimonial-author">
-                            <div class="author-avatar">TC</div>
+                            <img class="author-avatar-photo" src="https://i.pravatar.cc/64?img=59" alt="Sébastien M." loading="lazy">
                             <div class="author-info">
-                                <strong>Thomas C.</strong>
-                                <span>Responsable Service Client, E-commerce Marseille</span>
+                                <strong>Sébastien M.</strong>
+                                <span>Directeur Opérations — <span class="testi-company-badge" style="background:rgba(168,85,247,0.1);color:#c084fc;">Sédilot Transport · Melun 77</span></span>
                             </div>
                         </div>
                     </div>
@@ -6641,7 +6503,7 @@
                     </a>
 
                     <!-- Option 3: Phone / WhatsApp -->
-                    <a href="tel:+33XXXXXXXXX" class="contact-option phone">
+                    <a href="https://wa.me/33768367768" class="contact-option phone" target="_blank" rel="noopener">
                         <div class="contact-option-icon">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 015.13 12.79a19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
                         </div>
@@ -6910,19 +6772,6 @@
         </div>
     </section>
 
-    <!-- Smart Promo Popup -->
-    <div class="promo-popup" id="promoPopup">
-        <div class="promo-popup-header">
-            <span>Offre -40% expire bientôt</span>
-            <button class="promo-popup-close" id="promoClose">×</button>
-        </div>
-        <div class="promo-popup-body">
-            <p>Vous hésitez ? L'offre de lancement <strong>-40%</strong> sur le plan Créateur se termine dans :</p>
-            <div class="promo-popup-timer" id="promoTimer">—</div>
-            <p>Le plan <strong>Créateur</strong> passe de <s>829€</s> à <strong>497€</strong> — déploiement instantané. Plus que quelques places ce trimestre.</p>
-            <button class="promo-popup-btn" onclick="document.getElementById('promoPopup').classList.remove('visible');document.querySelector('#tarifs').scrollIntoView({behavior:'smooth'});">Voir les plans →</button>
-        </div>
-    </div>
 
     <!-- Calendly Widget (popup mode) -->
     <!-- PLACEHOLDER: Replace YOUR_CALENDLY_URL with your real Calendly link -->
@@ -8683,7 +8532,7 @@
 
         // Knowledge base
         var kb = {
-            pricing: 'Nous proposons 3 plans :\n\n• **Créateur** — 497€ + 99€/mois (jusqu\'à 3 agents) — Déploiement instantané\n• **Business** — 1 990€ + 349€/mois (jusqu\'à 12 agents) — Déployé sous 7 jours\n• **Sur Mesure** — Sur devis (agents illimités)\n\nTous incluent le code source et la garantie 30 jours. -40% sur le plan Créateur en ce moment.',
+            pricing: 'Nos tarifs sont **sur devis**, proposés sous 48h après un appel de 30 min.\n\nChaque mission est calibrée selon votre secteur, vos processus et le nombre d\'agents nécessaires.\n\nTous nos déploiements incluent le code source, la formation et la garantie 30 jours.',
             guarantee: 'Notre garantie est simple :\n\n• **Jour 1** — Déploiement de vos agents IA\n• **Jour 14** — Mesure de productivité avec votre architecte\n• **Jour 30** — Aucun gain mesurable ? Remboursement intégral à 100%\n\nVous gardez le code, la documentation et la formation.',
             demo: 'Découvrez NexusAI en action :\n\n• **God View** — Dashboard 3D avec nos 33 agents en temps réel\n• **Simulateur** — Calculez vos économies employés → agents IA\n• **Appel stratégique** — 30 min gratuites avec un architecte IA',
             delay: 'Les délais varient selon le plan :\n\n• **Créateur** — Instantané (déploiement le jour même)\n• **Business** — Sous 7 jours\n• **Sur Mesure** — Planning personnalisé après audit\n\nChaque déploiement inclut configuration, tests et formation.',
