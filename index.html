@@ -4149,11 +4149,6 @@
         <rect width="100%" height="100%" filter="url(#noiseFilter)"/>
     </svg>
 
-    <!-- Urgency Banner -->
-    <div class="urgency-banner" id="urgencyBanner">
-        Offre de lancement — <strong>-40% sur le plan Créateur</strong> — Se termine dans <span class="urgency-countdown" id="urgencyTimer">02j 14h 32m</span>
-    </div>
-
     <!-- Loader -->
     <div class="loader" id="loader">
         <div class="loader-inner"></div>
@@ -5431,12 +5426,21 @@
             letter-spacing: -1px;
             line-height: 1;
         }
-        .vs-col.traditional .vs-value { color: rgba(255,255,255,0.35); text-decoration: line-through; }
-        .vs-col.nexus .vs-value {
-            background: linear-gradient(135deg, #818cf8, #a855f7);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        .vs-list { display:flex; flex-direction:column; gap:0.45rem; margin-top:0.6rem; }
+        .vs-list-item {
+            display:flex; align-items:flex-start; gap:0.5rem;
+            font-size:0.78rem; line-height:1.45; color:rgba(255,255,255,0.45);
         }
-        .vs-sub { font-size: 0.72rem; color: rgba(255,255,255,0.3); margin-top: 0.2rem; }
+        .vs-list-item .vi { flex-shrink:0; font-size:0.75rem; margin-top:1px; }
+        .vs-col.nexus .vs-list-item { color:rgba(255,255,255,0.82); }
+        .vs-devis-tag {
+            display:inline-flex; align-items:center; gap:0.4rem;
+            margin-top:0.9rem; font-size:0.65rem; font-weight:700;
+            text-transform:uppercase; letter-spacing:1.2px;
+            color:#a78bfa; background:rgba(99,102,241,0.08);
+            border:1px solid rgba(99,102,241,0.18);
+            padding:0.25rem 0.7rem; border-radius:8px;
+        }
         .vs-center {
             display: flex;
             flex-direction: column;
@@ -5688,18 +5692,22 @@
             <div class="team-panel active" id="panel-droit">
                 <div class="vs-banner">
                     <div class="vs-col traditional">
-                        <div class="vs-label">Cabinet juridique traditionnel</div>
-                        <div class="vs-value">12 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
-                        <div class="vs-sub">3 juristes + assistante + outils</div>
+                        <div class="vs-label">Sans IA — situation actuelle</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">❌</span>Analyse d'un contrat : 3 à 4h par juriste</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Veille réglementaire : manuelle, partielle, décalée</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Disponible 9h–18h, hors congés et week-ends</div>
+                        </div>
                     </div>
-                    <div class="vs-center">
-                        <div class="vs-arrow-icon">→</div>
-                        <div class="vs-badge">−85% de coût</div>
-                    </div>
+                    <div class="vs-center"><div class="vs-arrow-icon">→</div></div>
                     <div class="vs-col nexus">
                         <div class="vs-label">Équipe NexusAI — Droit</div>
-                        <div class="vs-value">Sur devis</div>
-                        <div class="vs-sub">7 agents spécialisés, disponibles 24/7</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">✓</span>Analyse contrat : moins de 5 minutes, 24h/24</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Veille temps réel, aucun texte manqué</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>7 agents opérationnels en permanence, sans congé</div>
+                        </div>
+                        <div class="vs-devis-tag">Sur devis · Proposé sous 48h</div>
                     </div>
                 </div>
                 <div class="team-grid">
@@ -5728,18 +5736,22 @@
             <div class="team-panel" id="panel-sante">
                 <div class="vs-banner">
                     <div class="vs-col traditional">
-                        <div class="vs-label">Équipe administrative classique</div>
-                        <div class="vs-value">9 500€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
-                        <div class="vs-sub">2 secrétaires médicales + logiciels</div>
+                        <div class="vs-label">Sans IA — situation actuelle</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">❌</span>Compte-rendu médical : 20–30 min de dictée par consultation</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Planning & rappels : appels manuels, erreurs, oublis</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Codification CCAM : risque d'erreur, pertes de facturation</div>
+                        </div>
                     </div>
-                    <div class="vs-center">
-                        <div class="vs-arrow-icon">→</div>
-                        <div class="vs-badge">+1h30/jour/médecin</div>
-                    </div>
+                    <div class="vs-center"><div class="vs-arrow-icon">→</div></div>
                     <div class="vs-col nexus">
                         <div class="vs-label">Équipe NexusAI — Santé</div>
-                        <div class="vs-value">Sur devis</div>
-                        <div class="vs-sub">7 agents disponibles 24/7, zéro erreur</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">✓</span>Compte-rendu structuré en moins de 3 minutes</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Planning automatisé, rappels SMS patients sans intervention</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Codification instantanée, zéro acte non facturé</div>
+                        </div>
+                        <div class="vs-devis-tag">Sur devis · Proposé sous 48h</div>
                     </div>
                 </div>
                 <div class="team-grid">
@@ -5768,18 +5780,22 @@
             <div class="team-panel" id="panel-hotel">
                 <div class="vs-banner">
                     <div class="vs-col traditional">
-                        <div class="vs-label">Équipe conciergerie & revenue classique</div>
-                        <div class="vs-value">15 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
-                        <div class="vs-sub">Revenue manager + concierge + guest relations</div>
+                        <div class="vs-label">Sans IA — situation actuelle</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">❌</span>Réponse aux avis Google : 2 à 5 jours (quand ça se fait)</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Revenue management : tarification hebdomadaire, toujours en retard sur le marché</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Upsell : dépend du réceptionniste, aléatoire</div>
+                        </div>
                     </div>
-                    <div class="vs-center">
-                        <div class="vs-arrow-icon">→</div>
-                        <div class="vs-badge">+23% RevPAR</div>
-                    </div>
+                    <div class="vs-center"><div class="vs-arrow-icon">→</div></div>
                     <div class="vs-col nexus">
                         <div class="vs-label">Équipe NexusAI — Hôtellerie</div>
-                        <div class="vs-value">Sur devis</div>
-                        <div class="vs-sub">8 agents, gestion 24/7, zéro friction</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">✓</span>Réponse avis en moins de 30 min, personnalisée</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Tarification dynamique en continu, 24h/24</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Propositions d'upgrades déclenchées à chaque réservation</div>
+                        </div>
+                        <div class="vs-devis-tag">Sur devis · Proposé sous 48h</div>
                     </div>
                 </div>
                 <div class="team-grid">
@@ -5809,18 +5825,22 @@
             <div class="team-panel" id="panel-finance">
                 <div class="vs-banner">
                     <div class="vs-col traditional">
-                        <div class="vs-label">Équipe conformité & reporting classique</div>
-                        <div class="vs-value">18 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
-                        <div class="vs-sub">Compliance officer + analyste risque + outils</div>
+                        <div class="vs-label">Sans IA — situation actuelle</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">❌</span>Rapport mensuel : 2 à 3 jours de consolidation manuelle</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Anomalies détectées après coup, jamais en temps réel</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>KYC dossier : 3 à 5 jours, trop souvent bloquant</div>
+                        </div>
                     </div>
-                    <div class="vs-center">
-                        <div class="vs-arrow-icon">→</div>
-                        <div class="vs-badge">−90% erreurs</div>
-                    </div>
+                    <div class="vs-center"><div class="vs-arrow-icon">→</div></div>
                     <div class="vs-col nexus">
                         <div class="vs-label">Équipe NexusAI — Finance</div>
-                        <div class="vs-value">Sur devis</div>
-                        <div class="vs-sub">7 agents, surveillance temps réel, SLA 99.9%</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">✓</span>Rapport généré en moins d'une heure, sans intervention</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Surveillance continue, alertes immédiates 24h/24</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>KYC automatisé : dossier traité en moins de 30 minutes</div>
+                        </div>
+                        <div class="vs-devis-tag">Sur devis · Proposé sous 48h</div>
                     </div>
                 </div>
                 <div class="team-grid">
@@ -5849,18 +5869,22 @@
             <div class="team-panel" id="panel-marketing">
                 <div class="vs-banner">
                     <div class="vs-col traditional">
-                        <div class="vs-label">Agence marketing + freelances</div>
-                        <div class="vs-value">8 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
-                        <div class="vs-sub">Chef de projet + rédacteur + growth hacker</div>
+                        <div class="vs-label">Sans IA — situation actuelle</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">❌</span>1 article SEO : 3 à 4h + brief + relecture</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Reporting campagne : un point par semaine, jamais en direct</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Tests A/B : rares, coûteux, peu exploités</div>
+                        </div>
                     </div>
-                    <div class="vs-center">
-                        <div class="vs-arrow-icon">→</div>
-                        <div class="vs-badge">×4 contenu</div>
-                    </div>
+                    <div class="vs-center"><div class="vs-arrow-icon">→</div></div>
                     <div class="vs-col nexus">
                         <div class="vs-label">Équipe NexusAI — Marketing</div>
-                        <div class="vs-value">Sur devis</div>
-                        <div class="vs-sub">7 agents, production continue, A/B testing IA</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">✓</span>8 à 10 contenus optimisés publiés par jour</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Tableau de bord mis à jour en continu, alertes automatiques</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Tests automatiques sur chaque contenu et chaque campagne</div>
+                        </div>
+                        <div class="vs-devis-tag">Sur devis · Proposé sous 48h</div>
                     </div>
                 </div>
                 <div class="team-grid">
@@ -5889,18 +5913,22 @@
             <div class="team-panel" id="panel-immo">
                 <div class="vs-banner">
                     <div class="vs-col traditional">
-                        <div class="vs-label">Équipe commerciale & gestion classique</div>
-                        <div class="vs-value">11 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
-                        <div class="vs-sub">2 agents immo + gestionnaire locatif</div>
+                        <div class="vs-label">Sans IA — situation actuelle</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">❌</span>Lead entrant : rappel dans 24 à 48h, souvent perdu</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Estimation : visite physique obligatoire avant tout chiffre</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Relances acheteurs & locataires : oubliées, manuelles</div>
+                        </div>
                     </div>
-                    <div class="vs-center">
-                        <div class="vs-arrow-icon">→</div>
-                        <div class="vs-badge">+40% mandats</div>
-                    </div>
+                    <div class="vs-center"><div class="vs-arrow-icon">→</div></div>
                     <div class="vs-col nexus">
                         <div class="vs-label">Équipe NexusAI — Immobilier</div>
-                        <div class="vs-value">Sur devis</div>
-                        <div class="vs-sub">6 agents, qualification leads 24/7</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">✓</span>Lead qualifié et rappelé en moins de 5 minutes, 7j/7</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Estimation automatique sur critères, disponible instantanément</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Relances automatisées, aucun contact ne passe entre les mailles</div>
+                        </div>
+                        <div class="vs-devis-tag">Sur devis · Proposé sous 48h</div>
                     </div>
                 </div>
                 <div class="team-grid">
@@ -5928,18 +5956,22 @@
             <div class="team-panel" id="panel-rh">
                 <div class="vs-banner">
                     <div class="vs-col traditional">
-                        <div class="vs-label">Cabinet RH & recrutement classique</div>
-                        <div class="vs-value">10 000€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
-                        <div class="vs-sub">RRH + chargé recrutement + paie externalisée</div>
+                        <div class="vs-label">Sans IA — situation actuelle</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">❌</span>Lecture de 20 CV : 45 min minimum, souvent bâclée</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Onboarding : checklist manuelle, toujours incomplète</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Time-to-hire : 45 jours en moyenne, poste non couvert</div>
+                        </div>
                     </div>
-                    <div class="vs-center">
-                        <div class="vs-arrow-icon">→</div>
-                        <div class="vs-badge">−60% time-to-hire</div>
-                    </div>
+                    <div class="vs-center"><div class="vs-arrow-icon">→</div></div>
                     <div class="vs-col nexus">
                         <div class="vs-label">Équipe NexusAI — RH</div>
-                        <div class="vs-value">Sur devis</div>
-                        <div class="vs-sub">6 agents, onboarding automatisé, 0 oubli</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">✓</span>200 candidatures triées, notées et résumées en moins de 5 min</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Parcours d'intégration automatisé, complet, sans rien oublier</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Premier shortlist soumis en 24h, poste pourvu plus vite</div>
+                        </div>
+                        <div class="vs-devis-tag">Sur devis · Proposé sous 48h</div>
                     </div>
                 </div>
                 <div class="team-grid">
@@ -5967,18 +5999,22 @@
             <div class="team-panel" id="panel-retail">
                 <div class="vs-banner">
                     <div class="vs-col traditional">
-                        <div class="vs-label">Équipe e-commerce & SAV classique</div>
-                        <div class="vs-value">7 500€<span style="font-size:0.5em;font-weight:400;">/mois</span></div>
-                        <div class="vs-sub">Gestionnaire catalogue + SAV + logistique</div>
+                        <div class="vs-label">Sans IA — situation actuelle</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">❌</span>SAV : file d'attente, délai de réponse 24 à 48h</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Pricing : mis à jour une fois par semaine, jamais optimal</div>
+                            <div class="vs-list-item"><span class="vi">❌</span>Catalogue : mise à jour manuelle, décalages fréquents</div>
+                        </div>
                     </div>
-                    <div class="vs-center">
-                        <div class="vs-arrow-icon">→</div>
-                        <div class="vs-badge">+35% conversion</div>
-                    </div>
+                    <div class="vs-center"><div class="vs-arrow-icon">→</div></div>
                     <div class="vs-col nexus">
                         <div class="vs-label">Équipe NexusAI — Retail</div>
-                        <div class="vs-value">Sur devis</div>
-                        <div class="vs-sub">6 agents, pricing dynamique, SAV 24/7</div>
+                        <div class="vs-list">
+                            <div class="vs-list-item"><span class="vi">✓</span>SAV disponible 24h/24, réponse en moins de 2 minutes</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Pricing dynamique ajusté en continu selon le marché</div>
+                            <div class="vs-list-item"><span class="vi">✓</span>Catalogue synchronisé automatiquement, toujours à jour</div>
+                        </div>
+                        <div class="vs-devis-tag">Sur devis · Proposé sous 48h</div>
                     </div>
                 </div>
                 <div class="team-grid">
